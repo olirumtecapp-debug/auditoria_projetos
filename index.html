@@ -1,30 +1,26 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="h-full bg-slate-950 text-slate-100">
+<html lang="pt-BR" class="h-full bg-slate-950">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auditoria & Gestão de Projetos • Central de Comando</title>
-    <!-- Tailwind CSS -->
+    <title>Auditoria de Projetos • Ecossistema Digital</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
-                        code: ['Fira Code', 'Consolas', 'monospace']
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        code: ['"Fira Code"', 'monospace'],
                     }
                 }
             }
         }
     </script>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .font-code { font-family: 'Fira Code', monospace; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.8); border-radius: 9999px; }
@@ -53,8 +49,15 @@
                 </div>
             </div>
 
-            <!-- Contadores de Status Rápidos -->
+            <!-- Ações e Contadores de Status -->
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
+                <!-- Botão da Sugestão do Chat / Terminal IA -->
+                <button onclick="window.openChatModal()" class="bg-gradient-to-r from-purple-600 via-indigo-600 to-sky-500 hover:from-purple-500 hover:to-sky-400 text-white font-black px-3.5 py-1.5 rounded-xl text-xs shadow-lg transition flex items-center gap-1.5 cursor-pointer border border-purple-400/40 hover:scale-105 active:scale-95 duration-150">
+                    <span class="text-sm">🤖</span>
+                    <span>Integração IA & Chat</span>
+                    <span class="bg-white/20 text-[9px] uppercase px-1.5 py-0.5 rounded-full font-code">Futuro</span>
+                </button>
+
                 <div class="bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 flex items-center gap-2 text-xs">
                     <span class="text-slate-400">Total:</span>
                     <strong id="stat-total" class="font-bold text-white font-code">0</strong>
@@ -137,6 +140,45 @@
         </div>
     </footer>
 
+    <!-- Modal da Sugestão de Chat & Integração IA -->
+    <div id="chat-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 relative animate-in fade-in zoom-in-95 duration-200">
+            <button onclick="window.closeChatModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
+            
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-purple-600 to-sky-500 flex items-center justify-center text-2xl shadow-lg shrink-0">
+                    🤖
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-white">Central de Conversa e Comandos IA</h3>
+                    <p class="text-xs text-purple-300 font-medium">Proposta de Integração Direta no Painel</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 space-y-3 text-xs text-slate-300 leading-relaxed">
+                <p>
+                    💡 <strong class="text-white">O que faremos nesta funcionalidade quando formos implementar:</strong>
+                </p>
+                <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                    <li><strong class="text-sky-300">Chat Integrado:</strong> Converse com a IA sem sair do painel.</li>
+                    <li><strong class="text-indigo-300">Upload de Imagens / Prints:</strong> Envie prints de erros, telas de jogos ou referências visuais diretamente no chat.</li>
+                    <li><strong class="text-emerald-300">Ações de 1 Clique:</strong> Botões para criar ponto de restauração, commitar no GitHub e disparar deploy na Vercel direto daqui.</li>
+                    <li><strong class="text-amber-300">Auditoria Automatizada:</strong> A IA testará os links e verificará se o layout está perfeito.</li>
+                </ul>
+            </div>
+
+            <div class="bg-indigo-950/40 border border-indigo-500/20 rounded-xl p-3 text-[11px] text-indigo-300">
+                📌 <em>Esta proposta já está guardada e documentada. Quando você quiser avançar nela, basta clicar em "Copiar Prompt do Projeto" ou me avisar na conversa!</em>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="window.closeChatModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition cursor-pointer">
+                    Entendido / Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast de Notificação -->
     <div id="toast" class="hidden fixed bottom-5 right-5 bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-2xl flex items-center gap-2 border border-indigo-400 z-50 animate-bounce">
         <span>📋</span>
@@ -168,325 +210,373 @@
                 desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\EAD_Logica',
                 gitRepo: 'https://github.com/olirumtecapp-debug/codelogic-pro',
                 vercelUrl: 'https://codelogic-pro-ead.vercel.app',
-                icon: '⚡',
+                icon: '💻',
                 status: 'ok',
-                notes: 'Transparência de cursos livres e simulador prático no ar.'
+                notes: 'Plataforma EAD independente, 100% atualizada.'
+            },
+            {
+                id: 'portal-incriveis-jogos',
+                name: 'Portal Incríveis Jogos (Principal)',
+                category: 'Portal Central',
+                description: 'Hub central com catálogo de todos os jogos, autenticação, sistema de moedas PIX e painel unificado.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\PROJETO_IJ_ATUAL',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\PROJETO_IJ',
+                gitRepo: 'https://github.com/olirumtecapp-debug/PROJETO_IJ_ATUAL',
+                vercelUrl: 'https://projetoij-six.vercel.app',
+                icon: '🕹️',
+                status: 'pending',
+                notes: 'Revisar links internos de cada jogo para apontar para as versões mais atuais.'
             },
             {
                 id: 'caca-objetos',
                 name: 'Incrível Caça Objetos',
                 category: 'Jogos & Puzzles',
-                description: 'Jogo completo com 23 cenários ricos, zoom/pan, mapa da saga, loja de moedas PIX e modo admin.',
+                description: 'Jogo completo de caça-objetos com 23 fases detalhadas, mapa da saga, loja de moedas PIX e efeitos sonoros.',
                 localPath: 'D:\\\\ProjetosGITHUB\\\\spot-it',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\CacaObjetos',
-                gitRepo: 'https://github.com/olirumtecapp-debug/caca-objetos',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\spot-it',
+                gitRepo: 'https://github.com/olirumtecapp-debug/spot-it',
                 vercelUrl: 'https://caca-objetos.vercel.app',
                 icon: '🔍',
-                status: 'trabalhando',
-                notes: 'Versão de 23 fases sincronizada no GitHub e na Vercel.'
+                status: 'ok',
+                notes: 'Versão oficial resgatada com 23 fases ativas.'
             },
             {
-                id: 'projetoij',
-                name: 'Portal Incríveis Jogos',
-                category: 'Portal Central',
-                description: 'Portal principal que reúne todos os jogos de cartas, tabuleiro e puzzles com sistema de ranking.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\projetoij',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
-                gitRepo: 'https://github.com/olirumtecapp-debug/projetoij',
-                vercelUrl: 'https://projetoij-six.vercel.app',
-                icon: '🏆',
-                status: 'trabalhando',
-                notes: 'Necessário testar os links dos jogos que estão no ar.'
-            },
-            {
-                id: 'royal-vault-poker',
-                name: 'Royal Vault Poker (Super Poker)',
-                category: 'Jogos de Cartas',
-                description: 'Texas Hold\'em Poker realista com fichas 3D, mesas VIP, multiplayer e sons de cassino.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\royal-vault-poker',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
-                gitRepo: 'https://github.com/olirumtecapp-debug/royalvaultpokerNew',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/royal-vault-poker/index.html',
-                icon: '♠️',
-                status: 'nao_verificado',
-                notes: 'Verificar jogabilidade e layout das mesas.'
-            },
-            {
-                id: 'incrivelcanastra',
-                name: 'Incrível Canastra (Buraco)',
-                category: 'Jogos de Cartas',
-                description: 'Jogo de Canastra/Buraco brasileiro clássico com regras oficiais, canastras limpas e sujas.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\incrivelcanastra',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
-                gitRepo: 'https://github.com/olirumtecapp-debug/incrivelcanastraNew',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/incrivelcanastra/index.html',
+                id: 'jogo-memoria',
+                name: 'Jogo da Memória dos Incríveis',
+                category: 'Jogos & Puzzles',
+                description: 'Jogo da memória com temas clássicos, modos cronometrados, rankings e desafios visuais.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\jogo-memoria',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\jogo-memoria',
+                gitRepo: 'https://github.com/olirumtecapp-debug/jogo-memoria',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/jogo-memoria/index.html',
                 icon: '🃏',
-                status: 'nao_verificado',
-                notes: 'Testar lógica de pontuação e baralho.'
+                status: 'pending',
+                notes: 'Testar jogabilidade e checar se o deploy individual está funcional.'
             },
             {
-                id: 'incriveltrucot',
-                name: 'Incrível Truco Paulista & Mineiro',
-                category: 'Jogos de Cartas',
-                description: 'Truco clássico com manilhas, pedidos de truco/seis/nove/doze e voz dos jogadores.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\incriveltrucot',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
-                gitRepo: 'https://github.com/olirumtecapp-debug/incriveltrucotNew',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/incriveltrucot/index.html',
-                icon: '🔥',
-                status: 'nao_verificado',
-                notes: 'Validar sons de truco e contagem de tentos.'
+                id: 'tetris-reloaded',
+                name: 'Tetris Reloaded',
+                category: 'Jogos & Puzzles',
+                description: 'Clássico jogo de encaixe de blocos com física moderna, pontuação em tempo real e níveis acelerados.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\tetris-reloaded',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\tetris-reloaded',
+                gitRepo: 'https://github.com/olirumtecapp-debug/tetris-reloaded',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/tetris/index.html',
+                icon: '🧱',
+                status: 'pending',
+                notes: 'Verificar compatibilidade touch em mobile e som.'
             },
             {
-                id: 'incriveldomino28',
-                name: 'Incrível Dominó 28 Peças',
+                id: 'xadrez-mestre',
+                name: 'Xadrez dos Mestres',
                 category: 'Jogos de Tabuleiro',
-                description: 'Dominó clássico e em duplas com pedras realistas e contagem de pontos.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\incriveldomino28',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
-                gitRepo: 'https://github.com/olirumtecapp-debug/incriveldomino28New',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/incriveldomino28/index.html',
-                icon: '🀄',
-                status: 'nao_verificado',
-                notes: 'Conferir se a mesa encaixa as pedras corretamente.'
-            },
-            {
-                id: 'incrivelxadrez',
-                name: 'Incrível Xadrez Master',
-                category: 'Jogos de Tabuleiro',
-                description: 'Xadrez estratégico com IA Stockfish/personalizada, validação de jogadas e relógio.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\incrivelxadrez',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
-                gitRepo: 'https://github.com/olirumtecapp-debug/incrivelxadrezNew',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/incrivelxadrez/index.html',
+                description: 'Xadrez completo contra inteligência artificial (Stockfish/Engine leve) ou 2 jogadores locais.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\xadrez-mestre',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\xadrez-mestre',
+                gitRepo: 'https://github.com/olirumtecapp-debug/xadrez-mestre',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/xadrez/index.html',
                 icon: '♟️',
-                status: 'nao_verificado',
-                notes: 'Testar IA e detecção de xeque-mate.'
+                status: 'pending',
+                notes: 'Checar se a IA de jogadas e validação de xeque-mate estão ativas.'
             },
             {
-                id: 'ipaciencia',
-                name: 'Incrível Paciência (Klondike & Spider)',
+                id: 'damas-classicas',
+                name: 'Damas Clássicas',
+                category: 'Jogos de Tabuleiro',
+                description: 'Jogo de Damas com regras internacionais e brasileiras, capturas obrigatórias e modo vs CPU.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\damas-classicas',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\damas-classicas',
+                gitRepo: 'https://github.com/olirumtecapp-debug/damas-classicas',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/damas/index.html',
+                icon: '⚪',
+                status: 'pending',
+                notes: 'Auditar regras de dama voadora e capturas encadeadas.'
+            },
+            {
+                id: 'paciencia-solitaire',
+                name: 'Paciência Clássica (Solitaire)',
                 category: 'Jogos de Cartas',
-                description: 'Paciência clássica de 1 e 3 cartas com animações de vitória e desfazer jogadas.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\ipaciencia',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
-                gitRepo: 'https://github.com/olirumtecapp-debug/ipacienciaNew',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/ipaciencia/index.html',
-                icon: '♥️',
-                status: 'nao_verificado',
-                notes: 'Verificar arraste de cartas no mobile e desktop.'
+                description: 'Jogo de cartas solitário clássico Klondike com compras de 1 ou 3 cartas e dicas inteligentes.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\paciencia-solitaire',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\paciencia-solitaire',
+                gitRepo: 'https://github.com/olirumtecapp-debug/paciencia-solitaire',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/paciencia/index.html',
+                icon: '♠️',
+                status: 'pending',
+                notes: 'Verificar animação de cartas e auto-completar vitória.'
             },
             {
-                id: 'jogo-da-memoria',
-                name: 'Jogo da Memória Temático',
+                id: 'truco-paulista',
+                name: 'Truco Paulista & Mineiro',
+                category: 'Jogos de Cartas',
+                description: 'Jogo de Truco animado com vozes e gritos de truco, blefes, pontuação de tento e inteligência artificial.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\truco-paulista',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\truco-paulista',
+                gitRepo: 'https://github.com/olirumtecapp-debug/truco-paulista',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/truco/index.html',
+                icon: '🃏',
+                status: 'pending',
+                notes: 'Testar lógica de inteligência artificial de pedir seis/nove/doze.'
+            },
+            {
+                id: 'uno-online',
+                name: 'Color Cards (Estilo UNO)',
+                category: 'Jogos de Cartas',
+                description: 'Jogo de cartas frenético de cores e números com cartas especiais +2, +4, Inverter e Bloquear.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\uno-online',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\uno-online',
+                gitRepo: 'https://github.com/olirumtecapp-debug/uno-online',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/uno/index.html',
+                icon: '🌈',
+                status: 'pending',
+                notes: 'Auditar regra de compra cumulativa e IA dos oponentes.'
+            },
+            {
+                id: 'sudoku-master',
+                name: 'Sudoku Master Pro',
                 category: 'Jogos & Puzzles',
-                description: 'Jogo da memória com temas de animais, carros, heróis e níveis de dificuldade.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\jogo-da-memoria',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
-                gitRepo: 'https://github.com/olirumtecapp-debug/jogodamemoriaNew',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/jogo-da-memoria/index.html',
-                icon: '🧠',
-                status: 'nao_verificado',
-                notes: 'Testar virada de cartas e temporizador.'
-            },
-            {
-                id: 'jogodaforcajf',
-                name: 'Jogo da Forca Educativo',
-                category: 'Jogos de Palavras',
-                description: 'Forca com centenas de palavras por categorias de geografia, história e ciências.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\jogodaforcajf',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
-                gitRepo: 'https://github.com/olirumtecapp-debug/jogodaforcajfNew',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/jogodaforcajf/index.html',
-                icon: '🔤',
-                status: 'nao_verificado',
-                notes: 'Validar teclado virtual e dicas de palavras.'
-            },
-            {
-                id: 'sudokuincrivel',
-                name: 'Incrível Sudoku Diário',
-                category: 'Jogos & Puzzles',
-                description: 'Sudoku com gerador de tabuleiros, notas a lápis e níveis Fácil a Extremo.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\sudokuincrivel',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
-                gitRepo: 'https://github.com/olirumtecapp-debug/sudokuincrivelNew',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/sudokuincrivel/index.html',
+                description: 'Puzzles matemáticos de 1 a 9 com gerador infinito de tabuleiros (Fácil, Médio, Difícil e Especialista).',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\sudoku-master',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\sudoku-master',
+                gitRepo: 'https://github.com/olirumtecapp-debug/sudoku-master',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/sudoku/index.html',
                 icon: '🔢',
-                status: 'nao_verificado',
-                notes: 'Verificar gerador de tabuleiros e notas.'
+                status: 'pending',
+                notes: 'Checar sistema de anotações (rascunho a lápis).'
             },
             {
-                id: 'zenmahjong',
-                name: 'Zen Mahjong Solitaire',
+                id: '2048-fusion',
+                name: '2048 Fusion',
                 category: 'Jogos & Puzzles',
-                description: 'Mahjong tradicional chinês relaxante com pedras estilizadas e temas visuais.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\zenmahjong',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
-                gitRepo: 'https://github.com/olirumtecapp-debug/zenmahjongNew',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/zenmahjong/index.html',
-                icon: '🎋',
-                status: 'nao_verificado',
-                notes: 'Conferir algoritmo de empilhamento de pedras.'
+                description: 'Jogo de deslizar blocos e somar potências de 2 até alcançar o lendário bloco 2048.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\2048-fusion',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\2048-fusion',
+                gitRepo: 'https://github.com/olirumtecapp-debug/2048-fusion',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/2048/index.html',
+                icon: '🎴',
+                status: 'pending',
+                notes: 'Validar gestos swipe no celular.'
             },
             {
-                id: 'quiz-arena',
-                name: 'Quiz Arena (Perguntados)',
-                category: 'Trivia & Conhecimento',
-                description: 'Arena de perguntas e respostas com roleta temática, duelo de conhecimentos e estatísticas.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\quiz-arena',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
-                gitRepo: 'https://github.com/olirumtecapp-debug/quiz-arena',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/quiz-arena/index.html',
-                icon: '🎯',
-                status: 'nao_verificado',
-                notes: 'Validar banco de perguntas e roleta.'
-            },
-            {
-                id: 'sombrasdetetive',
-                name: 'Sombras do Detetive (Mistério)',
+                id: 'forca-brasil',
+                name: 'Jogo da Forca Educativo',
                 category: 'Jogos & Puzzles',
-                description: 'Aventura de investigação criminal com pistas, depoimentos de suspeitos e solução de enigmas.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\sombrasdetetive',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
-                gitRepo: 'https://github.com/olirumtecapp-debug/sombrasdetetiveNew',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/sombrasdetetive/index.html',
-                icon: '🕵️',
-                status: 'nao_verificado',
-                notes: 'Testar narrativa e diálogos dos suspeitos.'
+                description: 'Jogo da forca com milhares de palavras categorizadas (Geografia, Ciência, Cinema, Vocabulário).',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\forca-brasil',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\forca-brasil',
+                gitRepo: 'https://github.com/olirumtecapp-debug/forca-brasil',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/forca/index.html',
+                icon: '🪢',
+                status: 'pending',
+                notes: 'Conferir banco de palavras e dicas interativas.'
+            },
+            {
+                id: 'quiz-conhecimentos',
+                name: 'Mega Quiz de Conhecimentos',
+                category: 'Educação & EAD',
+                description: 'Quiz interativo multiplayer local com timer, categorias dinâmicas e ranking de pontuações.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\quiz-conhecimentos',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\quiz-conhecimentos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/quiz-conhecimentos',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/quiz/index.html',
+                icon: '💡',
+                status: 'pending',
+                notes: 'Testar sincronia de tempo e banco de perguntas.'
+            },
+            {
+                id: 'campo-minado',
+                name: 'Campo Minado Retrô',
+                category: 'Jogos & Puzzles',
+                description: 'O clássico Campo Minado com detecção de bandeiras, contadores e cronômetro de precisão.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\campo-minado',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\campo-minado',
+                gitRepo: 'https://github.com/olirumtecapp-debug/campo-minado',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/campo-minado/index.html',
+                icon: '💣',
+                status: 'pending',
+                notes: 'Checar clique duplo e clique longo para bandeira no celular.'
             }
         ];
 
-        let currentFilter = 'all';
         let projects = [];
+        let currentFilter = 'all';
 
         function loadProjects() {
-            const saved = localStorage.getItem('auditoria_projetos_db_v1');
+            const saved = localStorage.getItem('auditoria_projetos_state');
             if (saved) {
-                try { projects = JSON.parse(saved); } catch(e) { projects = INITIAL_PROJECTS; }
+                try {
+                    const parsed = JSON.parse(saved);
+                    // Mescla com a lista inicial para não perder nada novo
+                    projects = INITIAL_PROJECTS.map(ip => {
+                        const found = parsed.find(p => p.id === ip.id);
+                        return found ? { ...ip, status: found.status, notes: (found.notes !== undefined ? found.notes : ip.notes) } : ip;
+                    });
+                } catch (e) {
+                    projects = INITIAL_PROJECTS;
+                }
             } else {
                 projects = INITIAL_PROJECTS;
             }
-            saveProjects();
         }
 
         function saveProjects() {
-            localStorage.setItem('auditoria_projetos_db_v1', JSON.stringify(projects));
+            localStorage.setItem('auditoria_projetos_state', JSON.stringify(projects));
             updateStats();
         }
 
         function updateStats() {
-            document.getElementById('stat-total').innerText = projects.length;
-            document.getElementById('stat-ok').innerText = projects.filter(p => p.status === 'ok').length;
-            document.getElementById('stat-work').innerText = projects.filter(p => p.status === 'trabalhando').length;
-            document.getElementById('stat-pending').innerText = projects.filter(p => p.status === 'nao_verificado').length;
+            const total = projects.length;
+            const ok = projects.filter(p => p.status === 'ok').length;
+            const work = projects.filter(p => p.status === 'work').length;
+            const pending = projects.filter(p => p.status === 'pending').length;
+
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-ok').innerText = ok;
+            document.getElementById('stat-work').innerText = work;
+            document.getElementById('stat-pending').innerText = pending;
         }
 
-        window.setFilter = function(cat) {
-            currentFilter = cat;
+        window.openChatModal = function() {
+            document.getElementById('chat-modal').classList.remove('hidden');
+        };
+
+        window.closeChatModal = function() {
+            document.getElementById('chat-modal').classList.add('hidden');
+        };
+
+        window.setFilter = function(filter) {
+            currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400";
+                btn.className = 'filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400';
             });
-            if (cat === 'all') document.getElementById('filter-all').className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white";
-            else if (cat === 'Educação & EAD') document.getElementById('filter-edu').className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white";
-            else if (cat === 'Portal Central') document.getElementById('filter-portal').className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white";
-            else if (cat === 'Jogos & Puzzles') document.getElementById('filter-puzzles').className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white";
-            else if (cat === 'Jogos de Cartas') document.getElementById('filter-cards').className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white";
-            else if (cat === 'Jogos de Tabuleiro') document.getElementById('filter-board').className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white";
+            const activeId = filter === 'all' ? 'filter-all' :
+                             filter === 'Educação & EAD' ? 'filter-edu' :
+                             filter === 'Portal Central' ? 'filter-portal' :
+                             filter === 'Jogos & Puzzles' ? 'filter-puzzles' :
+                             filter === 'Jogos de Cartas' ? 'filter-cards' : 'filter-board';
+            const el = document.getElementById(activeId);
+            if (el) el.className = 'filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white';
             window.renderProjects();
         };
 
-        window.updateStatus = function(projectId, newStatus) {
-            const p = projects.find(x => x.id === projectId);
-            if (p) {
-                p.status = newStatus;
+        window.setStatus = function(id, status) {
+            const proj = projects.find(p => p.id === id);
+            if (proj) {
+                proj.status = status;
                 saveProjects();
                 window.renderProjects();
+                showToast(`Status atualizado para: ${status.toUpperCase()}`);
             }
         };
 
-        window.updateNotes = function(projectId, newNotes) {
-            const p = projects.find(x => x.id === projectId);
-            if (p) {
-                p.notes = newNotes;
+        window.updateNotes = function(id, notes) {
+            const proj = projects.find(p => p.id === id);
+            if (proj) {
+                proj.notes = notes;
                 saveProjects();
             }
         };
 
-        window.copyPrompt = function(projectId) {
-            const p = projects.find(x => x.id === projectId);
+        window.copyPrompt = function(id) {
+            const p = projects.find(item => item.id === id);
             if (!p) return;
 
-            const promptText = "Olá Antigravity! Vamos trabalhar no projeto \"" + p.name + "\".\n\n" +
-                "Informações Técnicas & Localização:\n" +
-                "- Diretório Principal: " + p.localPath + "\n" +
-                "- Diretório no Desktop: " + p.desktopPath + "\n" +
-                "- Repositório Git: " + p.gitRepo + "\n" +
-                "- URL de Produção Online: " + p.vercelUrl + "\n" +
-                "- Status Atual: " + (p.status === 'ok' ? 'Projeto Validado OK' : (p.status === 'trabalhando' ? 'Em Desenvolvimento' : 'Pendente de Auditoria')) + "\n" +
-                "- Anotações / O que fazer: " + (p.notes || 'Nenhuma') + "\n\n" +
-                "PROTOCOLO DE SEGURANÇA:\n" +
-                "1. Criar Ponto de Restauração antes de modificar qualquer linha.\n" +
-                "2. Manter estritamente o que já está funcionando sem alterar cores, temas ou funcionalidades boas.\n" +
-                "3. Sincronizar com Git (commit e push).\n" +
-                "4. Publicar na Vercel e me fornecer o link de validação.";
+            const promptText = `Olá Antigravity! Vamos trabalhar no projeto "${p.name}".
+Informações e Diretrizes do Projeto:
+- ID: ${p.id}
+- Categoria: ${p.category}
+- Pasta Principal Local: ${p.localPath}
+- Pasta Desktop: ${p.desktopPath}
+- Repositório GitHub: ${p.gitRepo}
+- URL Online Vercel: ${p.vercelUrl}
+- Descrição: ${p.description}
+- Anotações Atuais: ${p.notes || 'Nenhuma anotação.'}
+
+PROTOCOLO OBRIGATÓRIO DE TRABALHO:
+1. Ponto de Restauração Local: Antes de alterar qualquer linha de código, faça um backup de segurança local.
+2. Preservar o que está funcionando: Não altere layouts, temas e lógicas que já estão funcionando sem minha autorização expressa.
+3. Versionamento Git: Commitar e dar push de todas as alterações feitas para o GitHub do projeto.
+4. Deploy na Vercel: Realizar deploy e me entregar o link online ativo e testado para validação.
+
+Por favor, analise a pasta local e confirme que podemos iniciar a revisão deste projeto.`;
 
             navigator.clipboard.writeText(promptText).then(() => {
-                showToast("Prompt do projeto \"" + p.name + "\" copiado com sucesso!");
-            }).catch(() => {
-                showToast('Erro ao copiar prompt.');
+                showToast(`Prompt do projeto "${p.name}" copiado com sucesso!`);
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+                alert('Erro ao copiar prompt para a área de transferência.');
             });
         };
 
         function showToast(msg) {
-            const t = document.getElementById('toast');
-            const m = document.getElementById('toast-msg');
-            m.innerText = msg;
-            t.classList.remove('hidden');
-            setTimeout(() => t.classList.add('hidden'), 3500);
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            toastMsg.innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
         }
 
         window.renderProjects = function() {
+            const search = (document.getElementById('search-input').value || '').toLowerCase();
             const grid = document.getElementById('projects-grid');
-            const search = (document.getElementById('search-input')?.value || '').toLowerCase();
 
             const filtered = projects.filter(p => {
-                const matchCat = currentFilter === 'all' || p.category === currentFilter;
-                const matchSearch = p.name.toLowerCase().includes(search) || p.description.toLowerCase().includes(search) || p.category.toLowerCase().includes(search);
-                return matchCat && matchSearch;
+                const matchCategory = currentFilter === 'all' || p.category === currentFilter;
+                const matchSearch = p.name.toLowerCase().includes(search) || 
+                                    p.description.toLowerCase().includes(search) ||
+                                    p.category.toLowerCase().includes(search);
+                return matchCategory && matchSearch;
             });
 
+            updateStats();
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full py-12 text-center text-slate-500 text-sm">Nenhum projeto encontrado com estes filtros.</div>';
+                return;
+            }
+
             grid.innerHTML = filtered.map(p => {
+                const isWork = p.status === 'work';
                 const isOk = p.status === 'ok';
-                const isWork = p.status === 'trabalhando';
-                const isPending = p.status === 'nao_verificado';
+                const isPending = p.status === 'pending';
 
-                let borderClass = 'border-slate-800 hover:border-slate-700 bg-slate-900/60';
-                if (isOk) borderClass = 'border-emerald-500/40 bg-slate-900/90 shadow-lg shadow-emerald-950/20';
-                else if (isWork) borderClass = 'border-amber-500/40 bg-slate-900/90 shadow-lg shadow-amber-950/20';
-                else if (isPending) borderClass = 'border-rose-500/40 bg-slate-900/90 shadow-lg shadow-rose-950/20';
+                const borderCard = isWork ? 'border-amber-500/60 ring-2 ring-amber-500/20 bg-slate-900/95' :
+                                   isOk ? 'border-emerald-500/30 bg-slate-900/80' :
+                                   'border-slate-800 bg-slate-900/80';
 
-                return '<div class="rounded-2xl border ' + borderClass + ' p-5 flex flex-col justify-between gap-4 transition-all duration-200">' +
+                const badgeBg = isWork ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' :
+                                isOk ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' :
+                                'bg-rose-500/20 text-rose-300 border-rose-500/40';
+
+                const badgeText = isWork ? '🟡 Trabalhando Agora' :
+                                  isOk ? '🟢 Projeto OK' :
+                                  '🔴 Não Verificado';
+
+                return '<div class="border ' + borderCard + ' rounded-2xl p-5 shadow-xl transition hover:border-indigo-500/40 flex flex-col justify-between space-y-4">' +
                     '<div>' +
-                        '<div class="flex items-start justify-between gap-3 mb-2">' +
+                        '<div class="flex items-start justify-between gap-3 mb-2.5">' +
                             '<div class="flex items-center gap-2.5">' +
                                 '<span class="text-2xl p-2 bg-slate-950 rounded-xl border border-slate-800">' + p.icon + '</span>' +
                                 '<div>' +
-                                    '<h3 class="font-black text-white text-sm leading-snug">' + p.name + '</h3>' +
-                                    '<span class="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">' + p.category + '</span>' +
+                                    '<h3 class="text-sm font-bold text-white tracking-tight">' + p.name + '</h3>' +
+                                    '<span class="text-[10px] font-semibold text-indigo-400 font-code">' + p.category + '</span>' +
                                 '</div>' +
                             '</div>' +
+                            '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ' + badgeBg + '">' + badgeText + '</span>' +
                         '</div>' +
                         '<p class="text-xs text-slate-400 leading-relaxed mb-4">' + p.description + '</p>' +
-                        '<div class="bg-slate-950/90 p-2 rounded-xl border border-slate-800/80 mb-4">' +
-                            '<span class="text-[10px] text-slate-400 font-black block uppercase mb-1.5 font-code">Status de Auditoria:</span>' +
+                        '<div class="space-y-1.5 mb-4">' +
+                            '<label class="text-[10px] text-slate-400 font-code font-bold uppercase">Status de Auditoria:</label>' +
                             '<div class="grid grid-cols-3 gap-1.5">' +
-                                '<button onclick="window.updateStatus(\'' + p.id + '\', \'nao_verificado\')" class="text-[10px] font-bold py-1.5 px-2 rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ' + (isPending ? 'bg-rose-500 text-white font-black shadow' : 'bg-slate-900 hover:bg-slate-800 text-slate-400') + '">' +
+                                '<button onclick="window.setStatus(\'' + p.id + '\', \'pending\')" class="text-[11px] font-bold py-1.5 px-2 rounded-lg border transition cursor-pointer flex items-center justify-center gap-1 ' + (isPending ? 'bg-rose-600 text-white border-rose-400' : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200') + '">' +
                                     '<span>🔴</span> Pendente' +
                                 '</button>' +
-                                '<button onclick="window.updateStatus(\'' + p.id + '\', \'trabalhando\')" class="text-[10px] font-bold py-1.5 px-2 rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ' + (isWork ? 'bg-amber-500 text-slate-950 font-black shadow' : 'bg-slate-900 hover:bg-slate-800 text-slate-400') + '">' +
+                                '<button onclick="window.setStatus(\'' + p.id + '\', \'work\')" class="text-[11px] font-bold py-1.5 px-2 rounded-lg border transition cursor-pointer flex items-center justify-center gap-1 ' + (isWork ? 'bg-amber-600 text-white border-amber-400' : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200') + '">' +
                                     '<span>🟡</span> Foco' +
                                 '</button>' +
-                                '<button onclick="window.updateStatus(\'' + p.id + '\', \'ok\')" class="text-[10px] font-bold py-1.5 px-2 rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ' + (isOk ? 'bg-emerald-500 text-slate-950 font-black shadow' : 'bg-slate-900 hover:bg-slate-800 text-slate-400') + '">' +
+                                '<button onclick="window.setStatus(\'' + p.id + '\', \'ok\')" class="text-[11px] font-bold py-1.5 px-2 rounded-lg border transition cursor-pointer flex items-center justify-center gap-1 ' + (isOk ? 'bg-emerald-600 text-white border-emerald-400' : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200') + '">' +
                                     '<span>🟢</span> OK' +
                                 '</button>' +
                             '</div>' +
