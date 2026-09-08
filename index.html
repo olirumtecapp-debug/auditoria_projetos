@@ -43,9 +43,9 @@
                         <h1 class="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-1.5">
                             Auditoria de Projetos
                         </h1>
-                        <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full font-code">v2.0 PRO</span>
+                        <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full font-code">Catálogo Real</span>
                     </div>
-                    <p class="text-[11px] text-slate-400">Central de Validação, Restauração, Git & Deploy</p>
+                    <p class="text-[11px] text-slate-400">Portal Incríveis Jogos, Cursos & Games Oficiais</p>
                 </div>
             </div>
 
@@ -111,17 +111,18 @@
         <section class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="w-full md:w-80 relative">
                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
-                <input type="text" id="search-input" oninput="window.renderProjects()" placeholder="Buscar projeto por nome ou categoria..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
+                <input type="text" id="search-input" oninput="window.renderProjects()" placeholder="Buscar projeto ou jogo real..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
             </div>
 
-            <!-- Filtros de Categoria e Status -->
+            <!-- Filtros de Categoria -->
             <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto custom-scrollbar pb-1 md:pb-0">
                 <button onclick="window.setFilter('all')" id="filter-all" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white">Todos</button>
-                <button onclick="window.setFilter('Educação & EAD')" id="filter-edu" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Educação</button>
-                <button onclick="window.setFilter('Portal Central')" id="filter-portal" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Portal</button>
-                <button onclick="window.setFilter('Jogos & Puzzles')" id="filter-puzzles" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Puzzles</button>
-                <button onclick="window.setFilter('Jogos de Cartas')" id="filter-cards" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Cartas</button>
-                <button onclick="window.setFilter('Jogos de Tabuleiro')" id="filter-board" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Tabuleiro</button>
+                <button onclick="window.setFilter('Educação')" id="filter-edu" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Educação</button>
+                <button onclick="window.setFilter('Portal')" id="filter-portal" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Portal</button>
+                <button onclick="window.setFilter('Cartas & Cassino')" id="filter-cards" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Cartas & Cassino</button>
+                <button onclick="window.setFilter('Puzzle & Mistério')" id="filter-puzzles" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Puzzle & Mistério</button>
+                <button onclick="window.setFilter('Ação & Estratégia')" id="filter-action" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Ação & Guerra</button>
+                <button onclick="window.setFilter('Quiz & Palavras')" id="filter-quiz" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Quiz & Dedução</button>
             </div>
         </section>
 
@@ -135,8 +136,8 @@
     <!-- Footer -->
     <footer class="bg-slate-900 border-t border-slate-800 py-4 px-6 text-center text-xs text-slate-500">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-            <span>© 2026 Auditoria de Projetos • Central de Comando & Controle de Qualidade</span>
-            <span class="text-indigo-400 font-code font-bold">100% Sincronizado com GitHub & Vercel</span>
+            <span>© 2026 Auditoria de Projetos • Base de Projetos 100% Real do Disco</span>
+            <span class="text-indigo-400 font-code font-bold">D:\ProjetosGITHUB • Vercel • GitHub</span>
         </div>
     </footer>
 
@@ -185,27 +186,28 @@
         <span id="toast-msg">Prompt copiado com sucesso!</span>
     </div>
 
-    <!-- Script de Gestão dos Projetos -->
+    <!-- Script de Gestão dos Projetos Reais -->
     <script>
         const INITIAL_PROJECTS = [
+            // --- SITES PRINCIPAIS & EDUCAÇÃO ---
             {
                 id: 'expedicao-brasil',
                 name: 'Expedição Brasil',
-                category: 'Educação & EAD',
-                description: 'Plataforma educacional de história, geografia, ciências e cultura do Brasil com quizzes e certificados.',
+                category: 'Educação',
+                description: 'Plataforma educacional independente com quizzes, mapa do Brasil e certificados de cursos livres.',
                 localPath: 'D:\\\\ProjetosGITHUB\\\\expedicao-brasil',
                 desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\NovoQuiz',
                 gitRepo: 'https://github.com/olirumtecapp-debug/expedicao-brasil',
                 vercelUrl: 'https://expedicao-brasil.vercel.app',
                 icon: '🧭',
                 status: 'ok',
-                notes: 'Conformidade legal P0 aplicada e validada online.'
+                notes: 'Conformidade legal P0 e termos aprovados.'
             },
             {
                 id: 'codelogic-pro',
                 name: 'CodeLogic PRO',
-                category: 'Educação & EAD',
-                description: 'Super plataforma EAD de programação, lógica, HTML/CSS, JavaScript, Python e banco de dados SQL.',
+                category: 'Educação',
+                description: 'Super plataforma EAD de programação, lógica, HTML/CSS, JavaScript, Python e SQL.',
                 localPath: 'D:\\\\ProjetosGITHUB\\\\codelogic-pro',
                 desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\EAD_Logica',
                 gitRepo: 'https://github.com/olirumtecapp-debug/codelogic-pro',
@@ -215,186 +217,346 @@
                 notes: 'Plataforma EAD independente, 100% atualizada.'
             },
             {
-                id: 'portal-incriveis-jogos',
-                name: 'Portal Incríveis Jogos (Principal)',
-                category: 'Portal Central',
-                description: 'Hub central com catálogo de todos os jogos, autenticação, sistema de moedas PIX e painel unificado.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\PROJETO_IJ_ATUAL',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\PROJETO_IJ',
-                gitRepo: 'https://github.com/olirumtecapp-debug/PROJETO_IJ_ATUAL',
+                id: 'projetoij',
+                name: 'Portal Incríveis Jogos',
+                category: 'Portal',
+                description: 'Hub central com catálogo de todos os jogos, autenticação, loja PIX e painel administrativo.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\projetoij',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/projetoij',
                 vercelUrl: 'https://projetoij-six.vercel.app',
                 icon: '🕹️',
                 status: 'pending',
-                notes: 'Revisar links internos de cada jogo para apontar para as versões mais atuais.'
+                notes: 'Revisar links internos de cada jogo do catálogo.'
             },
+
+            // --- JOGOS VERIFICADOS (DO ARQUIVO JogosValidadosEvalidando.txt) ---
+            {
+                id: 'casino-imperial',
+                name: 'Casino Imperial (Poker, 21, Truco & Buraco)',
+                category: 'Cartas & Cassino',
+                description: 'Hub 4 em 1 de cassino: Texas Hold\'em, Blackjack 21, Truco e Buraco Canastra.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\projetoij\\\\public\\\\games\\\\casino-imperial',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/projetoij',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/casino-imperial/index.html',
+                icon: '🎰',
+                status: 'ok',
+                notes: 'Validado pelo usuário como OK.'
+            },
+            {
+                id: 'quiz-perguntados',
+                name: 'Quiz Perguntados Pro',
+                category: 'Quiz & Palavras',
+                description: 'Gire a roleta 3D física, responda perguntas desafiadoras e duele em partidas ao vivo.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\QuizPerguntadosGeminiCanva',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/QuizPerguntadosGeminiCanva',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/quiz-perguntados/index.html',
+                icon: '🎯',
+                status: 'ok',
+                notes: 'Validado pelo usuário como OK.'
+            },
+            {
+                id: 'bananabn',
+                name: 'Banana (Jogo do Mico)',
+                category: 'Cartas & Cassino',
+                description: 'O clássico Jogo do Mico em versão animada: jogue vs IA ou crie salas online com amigos.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\bananabn',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Banana',
+                gitRepo: 'https://github.com/olirumtecapp-debug/bananabn',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/banana/index.html',
+                icon: '🍌',
+                status: 'ok',
+                notes: 'Validado pelo usuário como OK.'
+            },
+            {
+                id: 'wardogsmmo',
+                name: 'WarDogs MMO',
+                category: 'Ação & Estratégia',
+                description: 'Batalha tática por turnos com cães de guerra, artilharia pesada e cenários destrutíveis.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\wardogsmmo',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/wardogsmmo',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/wardogs-mmo/index.html',
+                icon: '🐶',
+                status: 'ok',
+                notes: 'Validado pelo usuário como OK.'
+            },
+            {
+                id: 'colormania',
+                name: 'Incrível ColorMania (UNO)',
+                category: 'Cartas & Cassino',
+                description: 'Jogo estilo UNO frenético: combine cores e números, use +2, +4 e compre cartas.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\colorincrivel',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/colorincrivel',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/colormania/index.html',
+                icon: '🌈',
+                status: 'ok',
+                notes: 'Validado pelo usuário como OK.'
+            },
+            {
+                id: 'facetofacei',
+                name: 'Face to Face (Cara a Cara)',
+                category: 'Quiz & Palavras',
+                description: 'Duelo clássico de adivinhação e dedução: faça perguntas e elimine rostos para achar o secreto.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\facetofacei',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/facetofacei',
+                vercelUrl: 'https://facetofacei.lovable.app',
+                icon: '🥸',
+                status: 'work',
+                notes: 'Marcado como TRABALHANDO no arquivo de controle.'
+            },
+
+            // --- JOGOS REAIS DO PORTAL INCRÍVEIS JOGOS ---
             {
                 id: 'caca-objetos',
                 name: 'Incrível Caça Objetos',
-                category: 'Jogos & Puzzles',
-                description: 'Jogo completo de caça-objetos com 23 fases detalhadas, mapa da saga, loja de moedas PIX e efeitos sonoros.',
+                category: 'Puzzle & Mistério',
+                description: 'Jogo completo de caça-objetos com 23 fases detalhadas, mapa da saga e loja de moedas PIX.',
                 localPath: 'D:\\\\ProjetosGITHUB\\\\spot-it',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\spot-it',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\CacaObjetos',
                 gitRepo: 'https://github.com/olirumtecapp-debug/spot-it',
                 vercelUrl: 'https://caca-objetos.vercel.app',
                 icon: '🔍',
                 status: 'ok',
-                notes: 'Versão oficial resgatada com 23 fases ativas.'
+                notes: 'Versão oficial de 23 fases ativa.'
             },
             {
-                id: 'jogo-memoria',
-                name: 'Jogo da Memória dos Incríveis',
-                category: 'Jogos & Puzzles',
-                description: 'Jogo da memória com temas clássicos, modos cronometrados, rankings e desafios visuais.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\jogo-memoria',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\jogo-memoria',
-                gitRepo: 'https://github.com/olirumtecapp-debug/jogo-memoria',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/jogo-memoria/index.html',
-                icon: '🃏',
+                id: 'tiledeluxe',
+                name: 'Tile Explorer Deluxe',
+                category: 'Puzzle & Mistério',
+                description: 'Quebra-cabeça de combinar trios de pedras com visual moderno e múltiplos níveis.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\tiledeluxe',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/tiledeluxe',
+                vercelUrl: 'https://olirumtecapp-debug.github.io/tiledeluxe/',
+                icon: '🀄',
                 status: 'pending',
-                notes: 'Testar jogabilidade e checar se o deploy individual está funcional.'
+                notes: 'Auditar se as peças e pontuação estão fluídas.'
             },
             {
-                id: 'tetris-reloaded',
-                name: 'Tetris Reloaded',
-                category: 'Jogos & Puzzles',
-                description: 'Clássico jogo de encaixe de blocos com física moderna, pontuação em tempo real e níveis acelerados.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\tetris-reloaded',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\tetris-reloaded',
-                gitRepo: 'https://github.com/olirumtecapp-debug/tetris-reloaded',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/tetris/index.html',
-                icon: '🧱',
+                id: 'iconquistadores',
+                name: 'Conquistadores (Estilo WAR)',
+                category: 'Ação & Estratégia',
+                description: 'Jogo de guerra com 42 territórios, ataque nos dados e cartas de conquista.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\iconquistadores',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/iconquistadores',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/conquistadores/index.html',
+                icon: '⚔️',
                 status: 'pending',
-                notes: 'Verificar compatibilidade touch em mobile e som.'
+                notes: 'Checar movimentação de tropas e dados.'
             },
             {
-                id: 'xadrez-mestre',
-                name: 'Xadrez dos Mestres',
-                category: 'Jogos de Tabuleiro',
-                description: 'Xadrez completo contra inteligência artificial (Stockfish/Engine leve) ou 2 jogadores locais.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\xadrez-mestre',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\xadrez-mestre',
-                gitRepo: 'https://github.com/olirumtecapp-debug/xadrez-mestre',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/xadrez/index.html',
+                id: 'domineoceano',
+                name: 'Domine o Oceano (Batalha Naval)',
+                category: 'Ação & Estratégia',
+                description: 'Batalha naval por turnos com radar, sonar, frotas de guerra e mísseis guiados.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\domineoceano',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/domineoceano',
+                vercelUrl: 'https://domineoceano.lovable.app',
+                icon: '🚢',
+                status: 'pending',
+                notes: 'Testar lógica de disparos e IA adversária.'
+            },
+            {
+                id: 'incrivelxadrez',
+                name: 'Incrível Xadrez',
+                category: 'Puzzle & Mistério',
+                description: 'Jogo de xadrez tático no tabuleiro: jogue contra IA em vários níveis ou 2 jogadores.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\incrivelxadrez',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/incrivelxadrez',
+                vercelUrl: 'https://incrivelxadrez.lovable.app',
                 icon: '♟️',
                 status: 'pending',
-                notes: 'Checar se a IA de jogadas e validação de xeque-mate estão ativas.'
+                notes: 'Validar movimentação das peças e xeque-mate.'
             },
             {
-                id: 'damas-classicas',
-                name: 'Damas Clássicas',
-                category: 'Jogos de Tabuleiro',
-                description: 'Jogo de Damas com regras internacionais e brasileiras, capturas obrigatórias e modo vs CPU.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\damas-classicas',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\damas-classicas',
-                gitRepo: 'https://github.com/olirumtecapp-debug/damas-classicas',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/damas/index.html',
-                icon: '⚪',
+                id: 'incriveldomino28',
+                name: 'Incrível Dominó 28',
+                category: 'Puzzle & Mistério',
+                description: 'Dominó clássico brasileiro de 28 peças no estilo história em quadrinhos.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\incriveldomino28',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/incriveldomino28',
+                vercelUrl: 'https://incriveldomino28.lovable.app',
+                icon: '🀅',
                 status: 'pending',
-                notes: 'Auditar regras de dama voadora e capturas encadeadas.'
+                notes: 'Verificar contagem de pontos e fechamento de jogo.'
             },
             {
-                id: 'paciencia-solitaire',
-                name: 'Paciência Clássica (Solitaire)',
-                category: 'Jogos de Cartas',
-                description: 'Jogo de cartas solitário clássico Klondike com compras de 1 ou 3 cartas e dicas inteligentes.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\paciencia-solitaire',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\paciencia-solitaire',
-                gitRepo: 'https://github.com/olirumtecapp-debug/paciencia-solitaire',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/paciencia/index.html',
+                id: 'incrivelpuzzle',
+                name: 'Puzzle World Adventures (Quebra-Cabeça 3D)',
+                category: 'Puzzle & Mistério',
+                description: '20 cenários ilustrados com relevo 3D e 6 modos de encaixe relaxantes.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\incrivelpuzzle',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/incrivelpuzzle',
+                vercelUrl: 'https://incrivelpuzzle.lovable.app',
+                icon: '🧩',
+                status: 'pending',
+                notes: 'Testar arraste de peças e encaixe.'
+            },
+            {
+                id: 'misteriodamansao',
+                name: 'Mistério da Mansão & Raven Manor',
+                category: 'Puzzle & Mistério',
+                description: 'Investigue assassinatos em salas misteriosas, interrogue suspeitos e colete pistas.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\misteriodamansao',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/misteriodamansao',
+                vercelUrl: 'https://misteriodamansao.lovable.app',
+                icon: '🏰',
+                status: 'pending',
+                notes: 'Auditar diálogos e pistas.'
+            },
+            {
+                id: 'oenigmadavila',
+                name: 'O Enigma da Villa Aurora',
+                category: 'Puzzle & Mistério',
+                description: 'Jogo de tabuleiro de dedução criminal com 8 suspeitos, armas e 11 cômodos.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\oenigmadavila',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/oenigmadavila',
+                vercelUrl: 'https://oenigmadavila.lovable.app',
+                icon: '🕵️',
+                status: 'pending',
+                notes: 'Checar anotações do detetive.'
+            },
+            {
+                id: 'zenmahjong',
+                name: 'Mahjong Zen Harmony',
+                category: 'Puzzle & Mistério',
+                description: 'Mahjong Solitaire relaxante com cenários orientais animados e trilha zen.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\zenmahjong',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/zenmahjong',
+                vercelUrl: 'https://zenmahjong.lovable.app',
+                icon: '🀄',
+                status: 'pending',
+                notes: 'Testar pares e modos de dificuldade.'
+            },
+            {
+                id: 'ipaciencia',
+                name: 'Paciência Clássica',
+                category: 'Cartas & Cassino',
+                description: 'Paciência Klondike solitária: organize naipes, monte pilhas e limpe a mesa.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\ipaciencia',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/ipaciencia',
+                vercelUrl: 'https://ipaciencia.lovable.app',
                 icon: '♠️',
                 status: 'pending',
-                notes: 'Verificar animação de cartas e auto-completar vitória.'
+                notes: 'Checar auto-completar vitória.'
             },
             {
-                id: 'truco-paulista',
-                name: 'Truco Paulista & Mineiro',
-                category: 'Jogos de Cartas',
-                description: 'Jogo de Truco animado com vozes e gritos de truco, blefes, pontuação de tento e inteligência artificial.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\truco-paulista',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\truco-paulista',
-                gitRepo: 'https://github.com/olirumtecapp-debug/truco-paulista',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/truco/index.html',
+                id: 'incrivelcanastra',
+                name: 'Canastra Royale (Buraco)',
+                category: 'Cartas & Cassino',
+                description: 'Mesa de Buraco e Canastra brasileira: IA tática e salas online.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\incrivelcanastra',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/incrivelcanastra',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/canastra-royale/index.html',
                 icon: '🃏',
                 status: 'pending',
-                notes: 'Testar lógica de inteligência artificial de pedir seis/nove/doze.'
+                notes: 'Validar compra do lixo e canastras limpas/sujas.'
             },
             {
-                id: 'uno-online',
-                name: 'Color Cards (Estilo UNO)',
-                category: 'Jogos de Cartas',
-                description: 'Jogo de cartas frenético de cores e números com cartas especiais +2, +4, Inverter e Bloquear.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\uno-online',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\uno-online',
-                gitRepo: 'https://github.com/olirumtecapp-debug/uno-online',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/uno/index.html',
-                icon: '🌈',
-                status: 'pending',
-                notes: 'Auditar regra de compra cumulativa e IA dos oponentes.'
-            },
-            {
-                id: 'sudoku-master',
-                name: 'Sudoku Master Pro',
-                category: 'Jogos & Puzzles',
-                description: 'Puzzles matemáticos de 1 a 9 com gerador infinito de tabuleiros (Fácil, Médio, Difícil e Especialista).',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\sudoku-master',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\sudoku-master',
-                gitRepo: 'https://github.com/olirumtecapp-debug/sudoku-master',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/sudoku/index.html',
-                icon: '🔢',
-                status: 'pending',
-                notes: 'Checar sistema de anotações (rascunho a lápis).'
-            },
-            {
-                id: '2048-fusion',
-                name: '2048 Fusion',
-                category: 'Jogos & Puzzles',
-                description: 'Jogo de deslizar blocos e somar potências de 2 até alcançar o lendário bloco 2048.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\2048-fusion',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\2048-fusion',
-                gitRepo: 'https://github.com/olirumtecapp-debug/2048-fusion',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/2048/index.html',
+                id: 'incriveltrucot',
+                name: 'Incrível Truco HQ',
+                category: 'Cartas & Cassino',
+                description: 'Truco Paulista e Mineiro em estilo quadrinhos com vozes e pedidos de aumento.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\incriveltrucot',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/incriveltrucot',
+                vercelUrl: 'https://incriveltrucot.lovable.app',
                 icon: '🎴',
                 status: 'pending',
-                notes: 'Validar gestos swipe no celular.'
+                notes: 'Testar cálculo de tento e envio de cartas.'
             },
             {
-                id: 'forca-brasil',
-                name: 'Jogo da Forca Educativo',
-                category: 'Jogos & Puzzles',
-                description: 'Jogo da forca com milhares de palavras categorizadas (Geografia, Ciência, Cinema, Vocabulário).',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\forca-brasil',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\forca-brasil',
-                gitRepo: 'https://github.com/olirumtecapp-debug/forca-brasil',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/forca/index.html',
+                id: 'sudokuincrivel',
+                name: 'Sudoku Sereno',
+                category: 'Puzzle & Mistério',
+                description: 'Sudoku moderno com 4 níveis, modo mini 6x6, anotações a lápis e dicas.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\sudokuincrivel',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/sudokuincrivel',
+                vercelUrl: 'https://sudokuincrivel.lovable.app',
+                icon: '🔢',
+                status: 'pending',
+                notes: 'Checar validação de erros e notas.'
+            },
+            {
+                id: 'incrivelletras',
+                name: 'Incrível Letras',
+                category: 'Quiz & Palavras',
+                description: 'Jogo dinâmico de formar palavras e conectar letras estourando blocos.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\incrivelletras',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/incrivelletras',
+                vercelUrl: 'https://incrivelletras.lovable.app',
+                icon: '🔤',
+                status: 'pending',
+                notes: 'Testar dicionário de palavras em português.'
+            },
+            {
+                id: 'quem-eu-sou-game',
+                name: 'Quem Sou Eu?',
+                category: 'Quiz & Palavras',
+                description: 'Descubra o personagem misterioso através de rodadas de pistas progressivas.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\quem-eu-sou-game',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/quem-eu-sou-game',
+                vercelUrl: 'https://quem-eu-sou-game.lovable.app',
+                icon: '❓',
+                status: 'pending',
+                notes: 'Testar banco de perguntas e personagens.'
+            },
+            {
+                id: 'jogodaforcajf',
+                name: 'Jogo da Forca Clássico',
+                category: 'Quiz & Palavras',
+                description: 'Jogo da forca original com vocabulário brasileiro e modos vs IA ou 2 jogadores.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\jogodaforcajf',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/jogodaforcajf',
+                vercelUrl: 'https://jogodaforcajf.lovable.app',
                 icon: '🪢',
                 status: 'pending',
-                notes: 'Conferir banco de palavras e dicas interativas.'
+                notes: 'Testar teclado virtual e dicas.'
             },
             {
-                id: 'quiz-conhecimentos',
-                name: 'Mega Quiz de Conhecimentos',
-                category: 'Educação & EAD',
-                description: 'Quiz interativo multiplayer local com timer, categorias dinâmicas e ranking de pontuações.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\quiz-conhecimentos',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\quiz-conhecimentos',
-                gitRepo: 'https://github.com/olirumtecapp-debug/quiz-conhecimentos',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/quiz/index.html',
-                icon: '💡',
+                id: 'royal-vault-poker',
+                name: 'Royal Vault Poker VIP (2.5D)',
+                category: 'Cartas & Cassino',
+                description: 'Texas Hold\'em Poker realista 2.5D com bots táticos e multiplayer WebRTC.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\royal-vault-poker',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/royal-vault-poker',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/royal-vault-poker/index.html',
+                icon: '👑',
                 status: 'pending',
-                notes: 'Testar sincronia de tempo e banco de perguntas.'
+                notes: 'Auditar apostas e física de fichas.'
             },
             {
-                id: 'campo-minado',
-                name: 'Campo Minado Retrô',
-                category: 'Jogos & Puzzles',
-                description: 'O clássico Campo Minado com detecção de bandeiras, contadores e cronômetro de precisão.',
-                localPath: 'D:\\\\ProjetosGITHUB\\\\campo-minado',
-                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\campo-minado',
-                gitRepo: 'https://github.com/olirumtecapp-debug/campo-minado',
-                vercelUrl: 'https://projetoij-six.vercel.app/games/campo-minado/index.html',
-                icon: '💣',
+                id: 'incrivelkids',
+                name: 'Incríveis Jogos Kids',
+                category: 'Educação',
+                description: 'Cidade de minijogos educativos para crianças e família com interfaces coloridas.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\incrivelkids',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\Projetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/incrivelkids',
+                vercelUrl: 'https://incrivelkids.lovable.app',
+                icon: '🎈',
                 status: 'pending',
-                notes: 'Checar clique duplo e clique longo para bandeira no celular.'
+                notes: 'Testar navegação infantil simplificada.'
             }
         ];
 
@@ -402,11 +564,11 @@
         let currentFilter = 'all';
 
         function loadProjects() {
-            const saved = localStorage.getItem('auditoria_projetos_state');
+            // Sempre carregar a lista real oficial
+            const saved = localStorage.getItem('auditoria_projetos_state_v2');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
-                    // Mescla com a lista inicial para não perder nada novo
                     projects = INITIAL_PROJECTS.map(ip => {
                         const found = parsed.find(p => p.id === ip.id);
                         return found ? { ...ip, status: found.status, notes: (found.notes !== undefined ? found.notes : ip.notes) } : ip;
@@ -420,7 +582,7 @@
         }
 
         function saveProjects() {
-            localStorage.setItem('auditoria_projetos_state', JSON.stringify(projects));
+            localStorage.setItem('auditoria_projetos_state_v2', JSON.stringify(projects));
             updateStats();
         }
 
@@ -450,10 +612,11 @@
                 btn.className = 'filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400';
             });
             const activeId = filter === 'all' ? 'filter-all' :
-                             filter === 'Educação & EAD' ? 'filter-edu' :
-                             filter === 'Portal Central' ? 'filter-portal' :
-                             filter === 'Jogos & Puzzles' ? 'filter-puzzles' :
-                             filter === 'Jogos de Cartas' ? 'filter-cards' : 'filter-board';
+                             filter === 'Educação' ? 'filter-edu' :
+                             filter === 'Portal' ? 'filter-portal' :
+                             filter === 'Cartas & Cassino' ? 'filter-cards' :
+                             filter === 'Puzzle & Mistério' ? 'filter-puzzles' :
+                             filter === 'Ação & Estratégia' ? 'filter-action' : 'filter-quiz';
             const el = document.getElementById(activeId);
             if (el) el.className = 'filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white';
             window.renderProjects();
@@ -488,7 +651,7 @@ Informações e Diretrizes do Projeto:
 - Pasta Principal Local: ${p.localPath}
 - Pasta Desktop: ${p.desktopPath}
 - Repositório GitHub: ${p.gitRepo}
-- URL Online Vercel: ${p.vercelUrl}
+- URL Online: ${p.vercelUrl}
 - Descrição: ${p.description}
 - Anotações Atuais: ${p.notes || 'Nenhuma anotação.'}
 
@@ -615,11 +778,12 @@ Por favor, analise a pasta local e confirme que podemos iniciar a revisão deste
         };
 
         window.resetToDefaultState = function() {
-            if (confirm('Deseja restaurar a lista padrão de projetos?')) {
+            if (confirm('Deseja restaurar a lista padrão oficial de projetos?')) {
+                localStorage.removeItem('auditoria_projetos_state_v2');
                 projects = INITIAL_PROJECTS;
                 saveProjects();
                 window.renderProjects();
-                showToast('Lista restaurada para o padrão.');
+                showToast('Lista restaurada com os projetos reais!');
             }
         };
 
