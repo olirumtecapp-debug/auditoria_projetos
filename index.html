@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoria & Gestão de Projetos • Central de Comando</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+                        code: ['Fira Code', 'Consolas', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-code { font-family: 'Fira Code', monospace; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.8); border-radius: 9999px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 1); }
+    </style>
+</head>
+<body class="min-h-full flex flex-col bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
+
+    <!-- Topbar & Header Principal -->
+    <header class="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-600 to-sky-500 p-0.5 shadow-lg flex items-center justify-center shrink-0">
+                    <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center text-xl">
+                        🛡️
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-1.5">
+                            Auditoria de Projetos
+                        </h1>
+                        <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] font-bold px-2 py-0.5 rounded-full font-code">v2.0 PRO</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400">Central de Validação, Restauração, Git & Deploy</p>
+                </div>
+            </div>
+
+            <!-- Contadores de Status Rápidos -->
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
+                <div class="bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 flex items-center gap-2 text-xs">
+                    <span class="text-slate-400">Total:</span>
+                    <strong id="stat-total" class="font-bold text-white font-code">0</strong>
+                </div>
+                <div class="bg-emerald-950/40 px-3 py-1.5 rounded-xl border border-emerald-500/20 flex items-center gap-2 text-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-emerald-400">OK:</span>
+                    <strong id="stat-ok" class="font-bold text-emerald-300 font-code">0</strong>
+                </div>
+                <div class="bg-amber-950/40 px-3 py-1.5 rounded-xl border border-amber-500/20 flex items-center gap-2 text-xs">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    <span class="text-amber-400">Trabalhando:</span>
+                    <strong id="stat-work" class="font-bold text-amber-300 font-code">0</strong>
+                </div>
+                <div class="bg-rose-950/40 px-3 py-1.5 rounded-xl border border-rose-500/20 flex items-center gap-2 text-xs">
+                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    <span class="text-rose-400">Pendente:</span>
+                    <strong id="stat-pending" class="font-bold text-rose-300 font-code">0</strong>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6 flex-1 w-full">
+
+        <!-- Banner do Protocolo de Segurança Operacional -->
+        <section class="bg-gradient-to-r from-indigo-950/60 via-slate-900/80 to-slate-900/80 border border-indigo-500/30 rounded-2xl p-4 sm:p-5 shadow-xl relative overflow-hidden">
+            <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                <div class="space-y-1.5 max-w-3xl">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">🔒</span>
+                        <h2 class="text-sm font-black text-indigo-300 uppercase tracking-wider font-code">Protocolo Obrigatório de Segurança</h2>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Antes de alterar qualquer código: <strong>1. Criar Ponto de Restauração Local</strong> ➔ <strong>2. Manter o que já está bom sem mexer</strong> ➔ <strong>3. Commitar & Push no GitHub</strong> ➔ <strong>4. Deploy & Validação Online na Vercel</strong>.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="window.exportStateJSON()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold px-3 py-2 rounded-xl text-xs transition flex items-center gap-1.5 cursor-pointer">
+                        <span>💾</span> Salvar Backup
+                    </button>
+                    <button onclick="window.resetToDefaultState()" class="bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 border border-slate-700 font-bold px-3 py-2 rounded-xl text-xs transition cursor-pointer" title="Restaura os dados originais">
+                        <span>🔄</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Barra de Busca e Filtros Rápidos -->
+        <section class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="w-full md:w-80 relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
+                <input type="text" id="search-input" oninput="window.renderProjects()" placeholder="Buscar projeto por nome ou categoria..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
+            </div>
+
+            <!-- Filtros de Categoria e Status -->
+            <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto custom-scrollbar pb-1 md:pb-0">
+                <button onclick="window.setFilter('all')" id="filter-all" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white">Todos</button>
+                <button onclick="window.setFilter('Educação & EAD')" id="filter-edu" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Educação</button>
+                <button onclick="window.setFilter('Portal Central')" id="filter-portal" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Portal</button>
+                <button onclick="window.setFilter('Jogos & Puzzles')" id="filter-puzzles" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Puzzles</button>
+                <button onclick="window.setFilter('Jogos de Cartas')" id="filter-cards" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Cartas</button>
+                <button onclick="window.setFilter('Jogos de Tabuleiro')" id="filter-board" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Tabuleiro</button>
+            </div>
+        </section>
+
+        <!-- Grid de Cards dos Projetos -->
+        <section id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Renderizado dinamicamente via JavaScript -->
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-4 px-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>© 2026 Auditoria de Projetos • Central de Comando & Controle de Qualidade</span>
+            <span class="text-indigo-400 font-code font-bold">100% Sincronizado com GitHub & Vercel</span>
+        </div>
+    </footer>
+
+    <!-- Toast de Notificação -->
+    <div id="toast" class="hidden fixed bottom-5 right-5 bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-2xl flex items-center gap-2 border border-indigo-400 z-50 animate-bounce">
+        <span>📋</span>
+        <span id="toast-msg">Prompt copiado com sucesso!</span>
+    </div>
+
+    <!-- Script de Gestão dos Projetos -->
+    <script>
+        const INITIAL_PROJECTS = [
+            {
+                id: 'expedicao-brasil',
+                name: 'Expedição Brasil',
+                category: 'Educação & EAD',
+                description: 'Plataforma educacional de história, geografia, ciências e cultura do Brasil com quizzes e certificados.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\expedicao-brasil',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\NovoQuiz',
+                gitRepo: 'https://github.com/olirumtecapp-debug/expedicao-brasil',
+                vercelUrl: 'https://expedicao-brasil.vercel.app',
+                icon: '🧭',
+                status: 'ok',
+                notes: 'Conformidade legal P0 aplicada e validada online.'
+            },
+            {
+                id: 'codelogic-pro',
+                name: 'CodeLogic PRO',
+                category: 'Educação & EAD',
+                description: 'Super plataforma EAD de programação, lógica, HTML/CSS, JavaScript, Python e banco de dados SQL.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\codelogic-pro',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\EAD_Logica',
+                gitRepo: 'https://github.com/olirumtecapp-debug/codelogic-pro',
+                vercelUrl: 'https://codelogic-pro-ead.vercel.app',
+                icon: '⚡',
+                status: 'ok',
+                notes: 'Transparência de cursos livres e simulador prático no ar.'
+            },
+            {
+                id: 'caca-objetos',
+                name: 'Incrível Caça Objetos',
+                category: 'Jogos & Puzzles',
+                description: 'Jogo completo com 23 cenários ricos, zoom/pan, mapa da saga, loja de moedas PIX e modo admin.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\spot-it',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop\\\\CacaObjetos',
+                gitRepo: 'https://github.com/olirumtecapp-debug/caca-objetos',
+                vercelUrl: 'https://caca-objetos.vercel.app',
+                icon: '🔍',
+                status: 'trabalhando',
+                notes: 'Versão de 23 fases sincronizada no GitHub e na Vercel.'
+            },
+            {
+                id: 'projetoij',
+                name: 'Portal Incríveis Jogos',
+                category: 'Portal Central',
+                description: 'Portal principal que reúne todos os jogos de cartas, tabuleiro e puzzles com sistema de ranking.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\projetoij',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
+                gitRepo: 'https://github.com/olirumtecapp-debug/projetoij',
+                vercelUrl: 'https://projetoij-six.vercel.app',
+                icon: '🏆',
+                status: 'trabalhando',
+                notes: 'Necessário testar os links dos jogos que estão no ar.'
+            },
+            {
+                id: 'royal-vault-poker',
+                name: 'Royal Vault Poker (Super Poker)',
+                category: 'Jogos de Cartas',
+                description: 'Texas Hold\'em Poker realista com fichas 3D, mesas VIP, multiplayer e sons de cassino.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\royal-vault-poker',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
+                gitRepo: 'https://github.com/olirumtecapp-debug/royalvaultpokerNew',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/royal-vault-poker/index.html',
+                icon: '♠️',
+                status: 'nao_verificado',
+                notes: 'Verificar jogabilidade e layout das mesas.'
+            },
+            {
+                id: 'incrivelcanastra',
+                name: 'Incrível Canastra (Buraco)',
+                category: 'Jogos de Cartas',
+                description: 'Jogo de Canastra/Buraco brasileiro clássico com regras oficiais, canastras limpas e sujas.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\incrivelcanastra',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
+                gitRepo: 'https://github.com/olirumtecapp-debug/incrivelcanastraNew',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/incrivelcanastra/index.html',
+                icon: '🃏',
+                status: 'nao_verificado',
+                notes: 'Testar lógica de pontuação e baralho.'
+            },
+            {
+                id: 'incriveltrucot',
+                name: 'Incrível Truco Paulista & Mineiro',
+                category: 'Jogos de Cartas',
+                description: 'Truco clássico com manilhas, pedidos de truco/seis/nove/doze e voz dos jogadores.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\incriveltrucot',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
+                gitRepo: 'https://github.com/olirumtecapp-debug/incriveltrucotNew',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/incriveltrucot/index.html',
+                icon: '🔥',
+                status: 'nao_verificado',
+                notes: 'Validar sons de truco e contagem de tentos.'
+            },
+            {
+                id: 'incriveldomino28',
+                name: 'Incrível Dominó 28 Peças',
+                category: 'Jogos de Tabuleiro',
+                description: 'Dominó clássico e em duplas com pedras realistas e contagem de pontos.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\incriveldomino28',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
+                gitRepo: 'https://github.com/olirumtecapp-debug/incriveldomino28New',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/incriveldomino28/index.html',
+                icon: '🀄',
+                status: 'nao_verificado',
+                notes: 'Conferir se a mesa encaixa as pedras corretamente.'
+            },
+            {
+                id: 'incrivelxadrez',
+                name: 'Incrível Xadrez Master',
+                category: 'Jogos de Tabuleiro',
+                description: 'Xadrez estratégico com IA Stockfish/personalizada, validação de jogadas e relógio.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\incrivelxadrez',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
+                gitRepo: 'https://github.com/olirumtecapp-debug/incrivelxadrezNew',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/incrivelxadrez/index.html',
+                icon: '♟️',
+                status: 'nao_verificado',
+                notes: 'Testar IA e detecção de xeque-mate.'
+            },
+            {
+                id: 'ipaciencia',
+                name: 'Incrível Paciência (Klondike & Spider)',
+                category: 'Jogos de Cartas',
+                description: 'Paciência clássica de 1 e 3 cartas com animações de vitória e desfazer jogadas.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\ipaciencia',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
+                gitRepo: 'https://github.com/olirumtecapp-debug/ipacienciaNew',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/ipaciencia/index.html',
+                icon: '♥️',
+                status: 'nao_verificado',
+                notes: 'Verificar arraste de cartas no mobile e desktop.'
+            },
+            {
+                id: 'jogo-da-memoria',
+                name: 'Jogo da Memória Temático',
+                category: 'Jogos & Puzzles',
+                description: 'Jogo da memória com temas de animais, carros, heróis e níveis de dificuldade.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\jogo-da-memoria',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
+                gitRepo: 'https://github.com/olirumtecapp-debug/jogodamemoriaNew',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/jogo-da-memoria/index.html',
+                icon: '🧠',
+                status: 'nao_verificado',
+                notes: 'Testar virada de cartas e temporizador.'
+            },
+            {
+                id: 'jogodaforcajf',
+                name: 'Jogo da Forca Educativo',
+                category: 'Jogos de Palavras',
+                description: 'Forca com centenas de palavras por categorias de geografia, história e ciências.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\jogodaforcajf',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
+                gitRepo: 'https://github.com/olirumtecapp-debug/jogodaforcajfNew',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/jogodaforcajf/index.html',
+                icon: '🔤',
+                status: 'nao_verificado',
+                notes: 'Validar teclado virtual e dicas de palavras.'
+            },
+            {
+                id: 'sudokuincrivel',
+                name: 'Incrível Sudoku Diário',
+                category: 'Jogos & Puzzles',
+                description: 'Sudoku com gerador de tabuleiros, notas a lápis e níveis Fácil a Extremo.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\sudokuincrivel',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
+                gitRepo: 'https://github.com/olirumtecapp-debug/sudokuincrivelNew',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/sudokuincrivel/index.html',
+                icon: '🔢',
+                status: 'nao_verificado',
+                notes: 'Verificar gerador de tabuleiros e notas.'
+            },
+            {
+                id: 'zenmahjong',
+                name: 'Zen Mahjong Solitaire',
+                category: 'Jogos & Puzzles',
+                description: 'Mahjong tradicional chinês relaxante com pedras estilizadas e temas visuais.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\zenmahjong',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
+                gitRepo: 'https://github.com/olirumtecapp-debug/zenmahjongNew',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/zenmahjong/index.html',
+                icon: '🎋',
+                status: 'nao_verificado',
+                notes: 'Conferir algoritmo de empilhamento de pedras.'
+            },
+            {
+                id: 'quiz-arena',
+                name: 'Quiz Arena (Perguntados)',
+                category: 'Trivia & Conhecimento',
+                description: 'Arena de perguntas e respostas com roleta temática, duelo de conhecimentos e estatísticas.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\quiz-arena',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
+                gitRepo: 'https://github.com/olirumtecapp-debug/quiz-arena',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/quiz-arena/index.html',
+                icon: '🎯',
+                status: 'nao_verificado',
+                notes: 'Validar banco de perguntas e roleta.'
+            },
+            {
+                id: 'sombrasdetetive',
+                name: 'Sombras do Detetive (Mistério)',
+                category: 'Jogos & Puzzles',
+                description: 'Aventura de investigação criminal com pistas, depoimentos de suspeitos e solução de enigmas.',
+                localPath: 'D:\\\\ProjetosGITHUB\\\\sombrasdetetive',
+                desktopPath: 'C:\\\\Users\\\\Murilo Pai\\\\Desktop',
+                gitRepo: 'https://github.com/olirumtecapp-debug/sombrasdetetiveNew',
+                vercelUrl: 'https://projetoij-six.vercel.app/games/sombrasdetetive/index.html',
+                icon: '🕵️',
+                status: 'nao_verificado',
+                notes: 'Testar narrativa e diálogos dos suspeitos.'
+            }
+        ];
+
+        let currentFilter = 'all';
+        let projects = [];
+
+        function loadProjects() {
+            const saved = localStorage.getItem('auditoria_projetos_db_v1');
+            if (saved) {
+                try { projects = JSON.parse(saved); } catch(e) { projects = INITIAL_PROJECTS; }
+            } else {
+                projects = INITIAL_PROJECTS;
+            }
+            saveProjects();
+        }
+
+        function saveProjects() {
+            localStorage.setItem('auditoria_projetos_db_v1', JSON.stringify(projects));
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').innerText = projects.length;
+            document.getElementById('stat-ok').innerText = projects.filter(p => p.status === 'ok').length;
+            document.getElementById('stat-work').innerText = projects.filter(p => p.status === 'trabalhando').length;
+            document.getElementById('stat-pending').innerText = projects.filter(p => p.status === 'nao_verificado').length;
+        }
+
+        window.setFilter = function(cat) {
+            currentFilter = cat;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400";
+            });
+            if (cat === 'all') document.getElementById('filter-all').className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white";
+            else if (cat === 'Educação & EAD') document.getElementById('filter-edu').className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white";
+            else if (cat === 'Portal Central') document.getElementById('filter-portal').className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white";
+            else if (cat === 'Jogos & Puzzles') document.getElementById('filter-puzzles').className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white";
+            else if (cat === 'Jogos de Cartas') document.getElementById('filter-cards').className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white";
+            else if (cat === 'Jogos de Tabuleiro') document.getElementById('filter-board').className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white";
+            window.renderProjects();
+        };
+
+        window.updateStatus = function(projectId, newStatus) {
+            const p = projects.find(x => x.id === projectId);
+            if (p) {
+                p.status = newStatus;
+                saveProjects();
+                window.renderProjects();
+            }
+        };
+
+        window.updateNotes = function(projectId, newNotes) {
+            const p = projects.find(x => x.id === projectId);
+            if (p) {
+                p.notes = newNotes;
+                saveProjects();
+            }
+        };
+
+        window.copyPrompt = function(projectId) {
+            const p = projects.find(x => x.id === projectId);
+            if (!p) return;
+
+            const promptText = "Olá Antigravity! Vamos trabalhar no projeto \"" + p.name + "\".\n\n" +
+                "Informações Técnicas & Localização:\n" +
+                "- Diretório Principal: " + p.localPath + "\n" +
+                "- Diretório no Desktop: " + p.desktopPath + "\n" +
+                "- Repositório Git: " + p.gitRepo + "\n" +
+                "- URL de Produção Online: " + p.vercelUrl + "\n" +
+                "- Status Atual: " + (p.status === 'ok' ? 'Projeto Validado OK' : (p.status === 'trabalhando' ? 'Em Desenvolvimento' : 'Pendente de Auditoria')) + "\n" +
+                "- Anotações / O que fazer: " + (p.notes || 'Nenhuma') + "\n\n" +
+                "PROTOCOLO DE SEGURANÇA:\n" +
+                "1. Criar Ponto de Restauração antes de modificar qualquer linha.\n" +
+                "2. Manter estritamente o que já está funcionando sem alterar cores, temas ou funcionalidades boas.\n" +
+                "3. Sincronizar com Git (commit e push).\n" +
+                "4. Publicar na Vercel e me fornecer o link de validação.";
+
+            navigator.clipboard.writeText(promptText).then(() => {
+                showToast("Prompt do projeto \"" + p.name + "\" copiado com sucesso!");
+            }).catch(() => {
+                showToast('Erro ao copiar prompt.');
+            });
+        };
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            const m = document.getElementById('toast-msg');
+            m.innerText = msg;
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 3500);
+        }
+
+        window.renderProjects = function() {
+            const grid = document.getElementById('projects-grid');
+            const search = (document.getElementById('search-input')?.value || '').toLowerCase();
+
+            const filtered = projects.filter(p => {
+                const matchCat = currentFilter === 'all' || p.category === currentFilter;
+                const matchSearch = p.name.toLowerCase().includes(search) || p.description.toLowerCase().includes(search) || p.category.toLowerCase().includes(search);
+                return matchCat && matchSearch;
+            });
+
+            grid.innerHTML = filtered.map(p => {
+                const isOk = p.status === 'ok';
+                const isWork = p.status === 'trabalhando';
+                const isPending = p.status === 'nao_verificado';
+
+                let borderClass = 'border-slate-800 hover:border-slate-700 bg-slate-900/60';
+                if (isOk) borderClass = 'border-emerald-500/40 bg-slate-900/90 shadow-lg shadow-emerald-950/20';
+                else if (isWork) borderClass = 'border-amber-500/40 bg-slate-900/90 shadow-lg shadow-amber-950/20';
+                else if (isPending) borderClass = 'border-rose-500/40 bg-slate-900/90 shadow-lg shadow-rose-950/20';
+
+                return '<div class="rounded-2xl border ' + borderClass + ' p-5 flex flex-col justify-between gap-4 transition-all duration-200">' +
+                    '<div>' +
+                        '<div class="flex items-start justify-between gap-3 mb-2">' +
+                            '<div class="flex items-center gap-2.5">' +
+                                '<span class="text-2xl p-2 bg-slate-950 rounded-xl border border-slate-800">' + p.icon + '</span>' +
+                                '<div>' +
+                                    '<h3 class="font-black text-white text-sm leading-snug">' + p.name + '</h3>' +
+                                    '<span class="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">' + p.category + '</span>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<p class="text-xs text-slate-400 leading-relaxed mb-4">' + p.description + '</p>' +
+                        '<div class="bg-slate-950/90 p-2 rounded-xl border border-slate-800/80 mb-4">' +
+                            '<span class="text-[10px] text-slate-400 font-black block uppercase mb-1.5 font-code">Status de Auditoria:</span>' +
+                            '<div class="grid grid-cols-3 gap-1.5">' +
+                                '<button onclick="window.updateStatus(\'' + p.id + '\', \'nao_verificado\')" class="text-[10px] font-bold py-1.5 px-2 rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ' + (isPending ? 'bg-rose-500 text-white font-black shadow' : 'bg-slate-900 hover:bg-slate-800 text-slate-400') + '">' +
+                                    '<span>🔴</span> Pendente' +
+                                '</button>' +
+                                '<button onclick="window.updateStatus(\'' + p.id + '\', \'trabalhando\')" class="text-[10px] font-bold py-1.5 px-2 rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ' + (isWork ? 'bg-amber-500 text-slate-950 font-black shadow' : 'bg-slate-900 hover:bg-slate-800 text-slate-400') + '">' +
+                                    '<span>🟡</span> Foco' +
+                                '</button>' +
+                                '<button onclick="window.updateStatus(\'' + p.id + '\', \'ok\')" class="text-[10px] font-bold py-1.5 px-2 rounded-lg transition cursor-pointer flex items-center justify-center gap-1 ' + (isOk ? 'bg-emerald-500 text-slate-950 font-black shadow' : 'bg-slate-900 hover:bg-slate-800 text-slate-400') + '">' +
+                                    '<span>🟢</span> OK' +
+                                '</button>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="space-y-1 mb-4">' +
+                            '<label class="text-[10px] text-slate-400 font-code font-bold uppercase">Anotações / O que ajustar:</label>' +
+                            '<textarea onchange="window.updateNotes(\'' + p.id + '\', this.value)" rows="2" placeholder="Digite notas ou problemas deste projeto..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-[11px] text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition leading-relaxed custom-scrollbar">' + (p.notes || '') + '</textarea>' +
+                        '</div>' +
+                        '<div class="grid grid-cols-2 gap-2 text-[11px]">' +
+                            '<a href="' + p.vercelUrl + '" target="_blank" class="bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-bold py-1.5 px-2.5 rounded-lg text-center transition flex items-center justify-center gap-1.5">' +
+                                '<span>🌐</span> Abrir Online' +
+                            '</a>' +
+                            '<a href="' + p.gitRepo + '" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-bold py-1.5 px-2.5 rounded-lg text-center transition flex items-center justify-center gap-1.5">' +
+                                '<span>🐙</span> GitHub' +
+                            '</a>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="pt-3 border-t border-slate-800/80">' +
+                        '<button onclick="window.copyPrompt(\'' + p.id + '\')" class="w-full bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white font-black py-2 px-3 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer font-code">' +
+                            '<span>📋</span> Copiar Prompt de Trabalho' +
+                        '</button>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        };
+
+        window.exportStateJSON = function() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projects, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "auditoria_projetos_backup_" + (new Date().toISOString().slice(0,10)) + ".json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast('Backup exportado com sucesso!');
+        };
+
+        window.resetToDefaultState = function() {
+            if (confirm('Deseja restaurar a lista padrão de projetos?')) {
+                projects = INITIAL_PROJECTS;
+                saveProjects();
+                window.renderProjects();
+                showToast('Lista restaurada para o padrão.');
+            }
+        };
+
+        // Inicialização
+        loadProjects();
+        window.renderProjects();
+    </script>
+</body>
+</html>
