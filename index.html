@@ -26,7 +26,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.8); border-radius: 9999px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 1); }
     </style>
-  <!-- BUILD_SYNC_1788913423061 -->
+  <!-- BUILD_SYNC_1788960380588 -->
 </head>
 <body class="min-h-full flex flex-col bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
 
@@ -196,8 +196,8 @@
                 name: 'ELEVATE • Plataforma de Idiomas',
                 category: 'Educação',
                 description: 'Plataforma independente de aprendizado de idiomas (Inglês e Espanhol) com 180 aulas estruturadas de inglês, módulo de espanhol, teste de nivelamento adaptativo (30 questões), sintetizador de voz, Creator IA, Editor e Transparência Legal.',
-                localPath: 'D:\InglesPassoAPasso',
-                desktopPath: 'C:\Users\Murilo Pai\Desktop\Projetos',
+                localPath: 'D:\\InglesPassoAPasso',
+                desktopPath: 'C:\\Users\\Murilo Pai\\Desktop\\Projetos',
                 gitRepo: 'https://github.com/olirumtecapp-debug/ingles-passo-a-passo',
                 vercelUrl: 'https://ingles-passo-a-passo.vercel.app',
                 icon: '🦊',
@@ -579,7 +579,7 @@
 
         function loadProjects() {
             // Sempre carregar a lista real oficial
-            const saved = localStorage.getItem('auditoria_projetos_state_v2');
+            const saved = localStorage.getItem('auditoria_projetos_state_v3');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -596,7 +596,7 @@
         }
 
         function saveProjects() {
-            localStorage.setItem('auditoria_projetos_state_v2', JSON.stringify(projects));
+            localStorage.setItem('auditoria_projetos_state_v3', JSON.stringify(projects));
             updateStats();
         }
 
@@ -793,7 +793,7 @@ Por favor, analise a pasta local e confirme que podemos iniciar a revisão deste
 
         window.resetToDefaultState = function() {
             if (confirm('Deseja restaurar a lista padrão oficial de projetos?')) {
-                localStorage.removeItem('auditoria_projetos_state_v2');
+                localStorage.removeItem('auditoria_projetos_state_v3');
                 projects = INITIAL_PROJECTS;
                 saveProjects();
                 window.renderProjects();
