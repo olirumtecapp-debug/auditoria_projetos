@@ -205,6 +205,19 @@
                 notes: 'Plataforma 100% independente (fora do portal IJ). Inglês, Espanhol, Nivelamento e Fontes Legais integrados.'
             },
             {
+                id: 'catecismo-catolico',
+                name: 'CATECISMO • Plataforma Católica',
+                category: 'Educação',
+                description: 'Plataforma católica de formação, espiritualidade e estudo com Catecismo Oficial da Igreja Católica, Bíblia Sagrada (73 livros), Liturgia Diária, Santo do Dia, Quizzes Canônicos, Santo Terço, Caixa Postal de fiéis e sincronização em nuvem.',
+                localPath: 'D:\\Catecismo',
+                desktopPath: 'D:\\Catecismo',
+                gitRepo: 'https://github.com/olirumtecapp-debug/catecismo-catolico',
+                vercelUrl: 'https://catecismo.creativeam.com.br',
+                icon: '✝️',
+                status: 'ok',
+                notes: 'Subdomínio oficial catecismo.creativeam.com.br ativo com SSL, sincronização GitHub DB, Caixa Postal e 100% responsivo.'
+            },
+            {
                 id: 'expedicao-brasil',
                 name: 'Expedição Brasil',
                 category: 'Educação',
@@ -579,7 +592,7 @@
 
         function loadProjects() {
             // Sempre carregar a lista real oficial
-            const saved = localStorage.getItem('auditoria_projetos_state_v3');
+            const saved = localStorage.getItem('auditoria_projetos_state_v4') || localStorage.getItem('auditoria_projetos_state_v3');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -596,7 +609,7 @@
         }
 
         function saveProjects() {
-            localStorage.setItem('auditoria_projetos_state_v3', JSON.stringify(projects));
+            localStorage.setItem('auditoria_projetos_state_v4', JSON.stringify(projects));
             updateStats();
         }
 
