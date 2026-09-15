@@ -84,6 +84,11 @@
                     <span class="text-rose-400">Pendente:</span>
                     <strong id="stat-pending" class="font-bold text-rose-300 font-code">0</strong>
                 </div>
+                <div class="bg-sky-950/40 px-3 py-1.5 rounded-xl border border-sky-500/20 flex items-center gap-2 text-xs">
+                    <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                    <span class="text-sky-400">Padronizados:</span>
+                    <strong id="stat-padrao" class="font-bold text-sky-300 font-code">0/0</strong>
+                </div>
             </div>
         </div>
     </header>
@@ -130,6 +135,7 @@
                 <button onclick="window.setFilter('Puzzle & Mistério')" id="filter-puzzles" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Puzzle & Mistério</button>
                 <button onclick="window.setFilter('Ação & Estratégia')" id="filter-action" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Ação & Guerra</button>
                 <button onclick="window.setFilter('Quiz & Palavras')" id="filter-quiz" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">Quiz & Dedução</button>
+                <button onclick="window.setFilter('padrao')" id="filter-padrao" class="filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-400">⚠ Fora do Padrão</button>
             </div>
         </section>
 
@@ -593,6 +599,59 @@
             }
         ];
 
+        // Status de padronizacao de cada projeto (calculado no disco)
+        // vercel: true tambem quando o projeto tem build e a Vercel detecta sozinha
+        const PADRAO = {
+            "ingles-passo-a-passo": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: true },
+            "catecismo-catolico": { cred: true, vercel: true, gitignore: true, readme: true, docs: true, pwa: true },
+            "expedicao-brasil": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: true },
+            "codelogic-pro": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: true },
+            "projetoij": { cred: true, vercel: true, gitignore: false, readme: true, docs: true, pwa: false },
+            "casino-imperial": { cred: true, vercel: true, gitignore: false, readme: true, docs: true, pwa: false },
+            "quiz-perguntados": { cred: true, vercel: true, gitignore: true, readme: false, docs: false, pwa: false },
+            "bananabn": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "wardogsmmo": { cred: true, vercel: true, gitignore: true, readme: true, docs: false, pwa: false },
+            "colormania": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "facetofacei": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "caca-objetos": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "tiledeluxe": { cred: true, vercel: true, gitignore: true, readme: false, docs: false, pwa: true },
+            "iconquistadores": { cred: true, vercel: true, gitignore: true, readme: true, docs: false, pwa: false },
+            "domineoceano": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "incrivelxadrez": { cred: true, vercel: true, gitignore: false, readme: true, docs: true, pwa: false },
+            "incriveldomino28": { cred: true, vercel: true, gitignore: false, readme: true, docs: true, pwa: false },
+            "incrivelpuzzle": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "misteriodamansao": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "oenigmadavila": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "zenmahjong": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "ipaciencia": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "incrivelcanastra": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "incriveltrucot": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "sudokuincrivel": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "incrivelletras": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "quem-eu-sou-game": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "jogodaforcajf": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+            "royal-vault-poker": { cred: true, vercel: true, gitignore: true, readme: true, docs: false, pwa: false },
+            "incrivelkids": { cred: true, vercel: true, gitignore: false, readme: true, docs: false, pwa: false },
+        };
+
+        const PADRAO_ITENS = [
+            { chave: 'cred', rotulo: 'Credencial' },
+            { chave: 'vercel', rotulo: 'vercel.json' },
+            { chave: 'gitignore', rotulo: '.gitignore' },
+            { chave: 'readme', rotulo: 'README' },
+            { chave: 'docs', rotulo: 'Docs' },
+            { chave: 'pwa', rotulo: 'PWA' }
+        ];
+
+        function totalPadrao(p) {
+            if (!p.padrao) return 0;
+            return PADRAO_ITENS.filter(i => p.padrao[i.chave]).length;
+        }
+
+        function estaPadronizado(p) {
+            return totalPadrao(p) === PADRAO_ITENS.length;
+        }
+
         let projects = [];
         let currentFilter = 'all';
 
@@ -604,13 +663,14 @@
                     const parsed = JSON.parse(saved);
                     projects = INITIAL_PROJECTS.map(ip => {
                         const found = parsed.find(p => p.id === ip.id);
-                        return found ? { ...ip, status: found.status, notes: (found.notes !== undefined ? found.notes : ip.notes) } : ip;
+                        const base = found ? { ...ip, status: found.status, notes: (found.notes !== undefined ? found.notes : ip.notes) } : ip;
+                        return { ...base, padrao: PADRAO[base.id] || null };
                     });
                 } catch (e) {
-                    projects = INITIAL_PROJECTS;
+                    projects = INITIAL_PROJECTS.map(ip => ({ ...ip, padrao: PADRAO[ip.id] || null }));
                 }
             } else {
-                projects = INITIAL_PROJECTS;
+                projects = INITIAL_PROJECTS.map(ip => ({ ...ip, padrao: PADRAO[ip.id] || null }));
             }
         }
 
@@ -629,6 +689,8 @@
             document.getElementById('stat-ok').innerText = ok;
             document.getElementById('stat-work').innerText = work;
             document.getElementById('stat-pending').innerText = pending;
+            const elPadrao = document.getElementById('stat-padrao');
+            if (elPadrao) elPadrao.innerText = projects.filter(estaPadronizado).length + '/' + total;
         }
 
         window.openChatModal = function() {
@@ -649,7 +711,8 @@
                              filter === 'Portal' ? 'filter-portal' :
                              filter === 'Cartas & Cassino' ? 'filter-cards' :
                              filter === 'Puzzle & Mistério' ? 'filter-puzzles' :
-                             filter === 'Ação & Estratégia' ? 'filter-action' : 'filter-quiz';
+                             filter === 'Ação & Estratégia' ? 'filter-action' :
+                             filter === 'padrao' ? 'filter-padrao' : 'filter-quiz';
             const el = document.getElementById(activeId);
             if (el) el.className = 'filter-btn text-xs font-bold px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap bg-indigo-600 text-white';
             window.renderProjects();
@@ -719,7 +782,9 @@ Por favor, analise a pasta local e confirme que podemos iniciar a revisão deste
             const grid = document.getElementById('projects-grid');
 
             const filtered = projects.filter(p => {
-                const matchCategory = currentFilter === 'all' || p.category === currentFilter;
+                const matchCategory = currentFilter === 'all' ? true :
+                                      currentFilter === 'padrao' ? !estaPadronizado(p) :
+                                      p.category === currentFilter;
                 const matchSearch = p.name.toLowerCase().includes(search) || 
                                     p.description.toLowerCase().includes(search) ||
                                     p.category.toLowerCase().includes(search);
@@ -763,6 +828,15 @@ Por favor, analise a pasta local e confirme que podemos iniciar a revisão deste
                             '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ' + badgeBg + '">' + badgeText + '</span>' +
                         '</div>' +
                         '<p class="text-xs text-slate-400 leading-relaxed mb-4">' + p.description + '</p>' +
+                        '<div class="mb-4">' +
+                            '<label class="text-[10px] text-slate-400 font-code font-bold uppercase">Padronizacao: ' + totalPadrao(p) + '/' + PADRAO_ITENS.length + '</label>' +
+                            '<div class="flex flex-wrap gap-1 mt-1.5">' +
+                                PADRAO_ITENS.map(function (i) {
+                                    var tem = !!(p.padrao && p.padrao[i.chave]);
+                                    return '<span class="text-[10px] px-1.5 py-0.5 rounded-md border font-code ' + (tem ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30' : 'bg-rose-500/10 text-rose-300 border-rose-500/30') + '">' + (tem ? 'OK ' : 'X ') + i.rotulo + '</span>';
+                                }).join('') +
+                            '</div>' +
+                        '</div>' +
                         '<div class="space-y-1.5 mb-4">' +
                             '<label class="text-[10px] text-slate-400 font-code font-bold uppercase">Status de Auditoria:</label>' +
                             '<div class="grid grid-cols-3 gap-1.5">' +
