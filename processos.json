@@ -1,0 +1,538 @@
+{
+  "_meta": {
+    "title": "Processos Operacionais",
+    "subtitle": "Runbook do ecossistema — como repetir cada operação do zero",
+    "version": 1,
+    "updated": "2026-09-15",
+    "gitlexe": "C:\\Program Files\\Verdent\\resources\\app.asar.unpacked\\node_modules\\dugite\\git\\cmd\\git.exe",
+    "gitexe_alt": "C:\\Users\\Murilo Pai\\AppData\\Local\\GitHubDesktop\\app-3.6.4\\resources\\app\\git\\cmd\\git.exe",
+    "protocol": "1) Ponto de restauração local antes de alterar. 2) Não mexer no que já funciona sem autorização. 3) Commit + push no GitHub. 4) Deploy/validar online na Vercel e entregar o link testado.",
+    "warning": "Este repositório é PÚBLICO. Nunca grave tokens, senhas ou chaves aqui — use os placeholders <TOKEN_GITHUB>, <TOKEN_VERCEL>, <SENHA_ADMIN>."
+  },
+  "processes": [
+    {
+      "id": "backup-local",
+      "icon": "💾",
+      "name": "Backup local antes de alterar",
+      "category": "Backup",
+      "status": "ok",
+      "summary": "Ponto de restauração no disco antes de tocar em qualquer arquivo. É o passo 1 do protocolo e o único que salva quando o deploy dá errado.",
+      "whenToUse": "Sempre, antes de qualquer alteração em HTML, JS, CSS ou dados — principalmente nos monolitos de 500 KB a 2 MB sem build.",
+      "prerequisites": [
+        "Saber o caminho exato do arquivo que vai ser alterado",
+        "Espaço em disco (os monolitos passam de 2 MB)"
+      ],
+      "steps": [
+        "Copiar o arquivo alvo para um nome com data/hora ISO, sem sobrescrever backups anteriores.",
+        "Confirmar que a cópia existe e tem tamanho parecido com o original (Test-Path + Get-Item Length).",
+        "Manter o backup fora da pasta que o git versiona, ou aceitar que ele será ignorado pelo .gitignore.",
+        "Só então abrir o arquivo original para editar."
+      ],
+      "evidence": [
+        "Escola da Fé: escola_da_f.html.bak, .bak_purified, .pre_audio_bak, .pre_history_fix + ESCOLA_DA_FE_MASTER_BACKUP_COMPLETO.zip",
+        "Catecismo: backups/backup_catecismo_pre_santos_2026-09-13T09-49-06.zip",
+        "Inglês Passo a Passo: backups/ com 19 arquivos index_restore_2026-09-09T13-34-49-903Z.html",
+        "D:\\ProjetosGITHUB: 56 pastas no padrão *_backup_seguranca_<timestamp>"
+      ],
+      "pitfalls": [
+        "O .gitignore dos projetos ignora backups, *.zip e *.bak — logo o backup local NÃO vai para o GitHub. Se o disco morrer, o histórico morre com ele.",
+        "Backup com nome sem data acaba sobrescrito no próximo ciclo e deixa de proteger."
+      ],
+      "prompt": "Protocolo de segurança: antes de qualquer alteração, crie um ponto de restauração local.\n\nPROJETO: <NOME_DO_PROJETO>\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nARQUIVO QUE SERÁ ALTERADO: <CAMINHO_DO_ARQUIVO>\n\nPASSOS:\n1. Copie o arquivo para <NOME_DO_ARQUIVO>.bak_<AAAA-MM-DD_HH-mm> SEM sobrescrever backups existentes.\n2. Se a pasta tiver a convenção backups/, guarde também uma cópia lá com timestamp ISO no nome.\n3. Confirme com Test-Path e Get-Item que a cópia existe e tem tamanho equivalente ao original.\n4. Só depois disso edite o arquivo original.\n5. Não mexa em nada além do que eu autorizar.\n\nAo terminar, me diga o caminho exato do backup criado."
+    },
+    {
+      "id": "copiar-para-index",
+      "icon": "📄",
+      "name": "Copiar a versão de trabalho para index.html",
+      "category": "Git & Deploy",
+      "status": "ok",
+      "summary": "A Vercel publica o index.html. Quando o trabalho é feito num arquivo com nome próprio, é obrigatório copiá-lo para index.html antes do commit.",
+      "whenToUse": "Sempre que o arquivo publicado tiver nome diferente de index.html (caso do Escola da Fé, onde o trabalho é feito em escola_da_f.html).",
+      "prerequisites": [
+        "Alteração já validada no arquivo de trabalho",
+        "Backup local do index.html atual já criado"
+      ],
+      "steps": [
+        "Rodar: Copy-Item \"<PASTA>\\<ARQUIVO_DE_TRABALHO>\" \"<PASTA>\\index.html\" -Force",
+        "Conferir que os dois arquivos ficaram com o mesmo tamanho (ou o mesmo hash).",
+        "Confirmar que o git status mostra os dois arquivos como modificados."
+      ],
+      "evidence": [
+        "Regra escrita no docs.html do Escola da Fé: 'Sempre copiar escola_da_f.html para index.html antes do commit.'",
+        "Escola da Fé: escola_da_f.html e index.html têm o mesmo hash (idênticos)"
+      ],
+      "pitfalls": [
+        "Esquecer a cópia publica a versão antiga e dá a impressão de que o deploy falhou.",
+        "Os dois arquivos podem divergir: o git status do Escola da Fé mostra ambos como modificados separadamente."
+      ],
+      "prompt": "Antes de qualquer commit/deploy do projeto <NOME_DO_PROJETO>, execute o passo obrigatório de sincronização:\n\nCopy-Item \"<CAMINHO_DO_ARQUIVO_DE_TRABALHO>\" \"<CAMINHO_DA_PASTA>\\index.html\" -Force\n\nDepois:\n1. Confirme que os dois arquivos têm o mesmo tamanho/hash.\n2. Rode git status e confirme que index.html aparece modificado.\n3. Só então faça o commit.\n\nSe os arquivos divergirem por qualquer motivo, me avise antes de prosseguir."
+    },
+    {
+      "id": "git-commit-push",
+      "icon": "🐙",
+      "name": "Commit + push (salvar no GitHub)",
+      "category": "Git & Deploy",
+      "status": "ok",
+      "summary": "Envia o código para o GitHub sem se preocupar com a Vercel ainda. É o segundo passo do protocolo.",
+      "whenToUse": "Ao fechar um bloco de trabalho, mesmo que o deploy fique para depois.",
+      "prerequisites": [
+        "Backup local criado",
+        "Cópia para index.html feita (se aplicável)",
+        "Executável do git conhecido — o git NÃO está no PATH desta máquina"
+      ],
+      "steps": [
+        "Definir o caminho do git: $git = 'C:\\Program Files\\Verdent\\resources\\app.asar.unpacked\\node_modules\\dugite\\git\\cmd\\git.exe'",
+        "& $git -C \"<PASTA>\" add -A",
+        "& $git -C \"<PASTA>\" commit -m \"<MENSAGEM>\"",
+        "Enviar com o token em Basic Auth: monte $b64 com [Convert]::ToBase64String de \"<USUARIO>:<TOKEN_GITHUB>\" e use -c credential.helper= -c http.extraHeader=Authorization: Basic $b64",
+        "Conferir o resultado por exit code e por & $git log --oneline -1"
+      ],
+      "evidence": [
+        "Escola da Fé: remote https://olirumtecapp-debug@github.com/olirumtecapp-debug/escola-da-fe.git, branch main",
+        "Scripts em D:\\ProjetosGITHUB: push_all_43_repos_to_github.cjs, deploy_and_sync_all_3_games.cjs (git init + remote add + push -u origin main)",
+        "Mensagens no padrão fix:, feat:, chore: em português"
+      ],
+      "pitfalls": [
+        "O git push escreve avisos no stderr do PowerShell mesmo quando dá certo — confirme pelo exit code, não pela aparência da saída.",
+        "Nunca use push --force sem me avisar: os scripts do ecossistema usam --force e isso pode apagar commits.",
+        "Commits com mensagem genérica (update, ajustes) dificultam achar quando algo quebrou."
+      ],
+      "prompt": "Faça commit e push do projeto <NOME_DO_PROJETO> para o GitHub, sem deploy.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nREPOSITÓRIO: https://github.com/olirumtecapp-debug/<REPO>.git\nBRANCH: main\nGIT (executável exato): C:\\Program Files\\Verdent\\resources\\app.asar.unpacked\\node_modules\\dugite\\git\\cmd\\git.exe\n\nSEQUÊNCIA PowerShell:\n$git = 'C:\\Program Files\\Verdent\\resources\\app.asar.unpacked\\node_modules\\dugite\\git\\cmd\\git.exe'\n& $git -C \"<CAMINHO_DA_PASTA>\" add -A\n& $git -C \"<CAMINHO_DA_PASTA>\" commit -m \"<MENSAGEM_DESCRITIVA>\"\n$token = '<TOKEN_GITHUB>'\n$b64 = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(\"olirumtecapp-debug:$token\"))\n& $git -C \"<CAMINHO_DA_PASTA>\" -c \"credential.helper=\" -c \"http.extraHeader=Authorization: Basic $b64\" push origin main 2>&1\n\nCONFERÊNCIA: rode git log --oneline -1 e git status --short. O push pode escrever avisos no stderr mesmo com sucesso — valide pelo exit code.\nNÃO use --force. Se o push for rejeitado, pare e me mostre o erro."
+    },
+    {
+      "id": "deploy-vercel",
+      "icon": "🚀",
+      "name": "Deploy no Vercel via GitHub",
+      "category": "Git & Deploy",
+      "status": "ok",
+      "summary": "Publica a versão de produção na Vercel a partir do commit no GitHub. Toda vez que algo chega no branch main, a Vercel publica sozinha.",
+      "whenToUse": "Ao terminar e commitar uma alteração que precisa entrar no ar.",
+      "prerequisites": [
+        "Commit já enviado para o branch main",
+        "Token da Vercel em mãos (nunca gravado no repositório)"
+      ],
+      "steps": [
+        "Confirmar que o push no branch main terminou com sucesso.",
+        "Deixar a Vercel publicar automaticamente (deploy por integração com o GitHub) OU disparar por API: POST https://api.vercel.com/v13/deployments com Authorization: Bearer <TOKEN_VERCEL>.",
+        "Corpo do POST: {\"name\":\"<NOME_DO_PROJETO>VERCEL\",\"gitSource\":{\"type\":\"github\",\"repoId\":<ID_REPO_GITHUB>,\"ref\":\"main\"},\"target\":\"production\"}",
+        "Ajustar alias se necessário: POST https://api.vercel.com/v2/deployments/{id}/aliases com {\"alias\":\"<DOMINIO>.vercel.app\"}",
+        "Abrir a URL de produção com no-cache e conferir se a alteração apareceu."
+      ],
+      "evidence": [
+        "Sites ativos: escoladafe.vercel.app, catecismo-catolico.vercel.app, ingles-passo-a-passo.vercel.app, codelogic-pro-ead.vercel.app",
+        "Escola da Fé: projeto Vercel prj_CMaoLFP2n8sVPKdMRfeQnnWN4nSC, repo GitHub ID 1370341188, branch main"
+      ],
+      "pitfalls": [
+        "O deploy da Vercel serve o index.html do repositório: se a cópia de escola_da_f.html para index.html não foi feita, o site continua antigo.",
+        "A Vercel faz cache de HTML no navegador — valide com Ctrl+F5 ou com um parâmetro na URL.",
+        "O repositório do Inglês tem README apontando para elevate.vercel.app, que está 404; o endereço correto é ingles-passo-a-passo.vercel.app."
+      ],
+      "prompt": "Faça o deploy do projeto <NOME_DO_PROJETO> para produção na Vercel via GitHub.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nPASSO OBRIGATÓRIO ANTES DO COMMIT: Copy-Item \"<ARQUIVO_DE_TRABALHO>\" \"<CAMINHO_DA_PASTA>\\index.html\" -Force\nGIT: C:\\Program Files\\Verdent\\resources\\app.asar.unpacked\\node_modules\\dugite\\git\\cmd\\git.exe\n\nGITHUB:\n- Conta: olirumtecapp-debug\n- Token: <TOKEN_GITHUB>\n- Branch: main\n\nVERCEL:\n- Token: <TOKEN_VERCEL>\n- POST https://api.vercel.com/v13/deployments\n- Body: {\"name\":\"<NOME_DO_PROJETO>VERCEL\",\"gitSource\":{\"type\":\"github\",\"repoId\":<ID_REPO_GITHUB>,\"ref\":\"main\"},\"target\":\"production\"}\n- Alias: POST https://api.vercel.com/v2/deployments/{id}/aliases com {\"alias\":\"<DOMINIO>.vercel.app\"}\n\nDEPOIS: abra a URL de produção sem cache e confirme que a alteração está no ar. Me entregue o link testado."
+    },
+    {
+      "id": "criar-repo-novo",
+      "icon": "🆕",
+      "name": "Criar repositório novo + primeiro push",
+      "category": "Git & Deploy",
+      "status": "ok",
+      "summary": "Cria o repositório no GitHub, inicializa o git local e envia o primeiro commit. Caminho usado pelos scripts do ecossistema.",
+      "whenToUse": "Ao começar um projeto novo que ainda não está versionado.",
+      "prerequisites": [
+        "Pasta do projeto já criada e funcionando localmente",
+        "Token com escopo repo (<TOKEN_GITHUB>)"
+      ],
+      "steps": [
+        "Criar o repositório pela API: POST https://api.github.com/user/repos com {\"name\":\"<REPO>\",\"description\":\"<DESCRICAO>\",\"private\":true}",
+        "Na pasta: git init",
+        "git config user.name e user.email locais do repositório",
+        "git remote add origin https://<USUARIO>:<TOKEN_GITHUB>@github.com/olirumtecapp-debug/<REPO>.git",
+        "git add -A ; git commit -m \"feat: release inicial\" ; git branch -M main ; git push -u origin main"
+      ],
+      "evidence": [
+        "deploy_and_sync_all_3_games.cjs: createRepo() via API + pushFolderToGit()",
+        "create_and_push_bananabn_new.cjs, create_and_push_iconquistadores_new.cjs, fresh_clone_*.cjs",
+        "59 repositórios git dentro de D:\\ProjetosGITHUB"
+      ],
+      "pitfalls": [
+        "Os scripts antigos criam com private:false — se o conteúdo tem credencial, o repositório nasce público. Prefira private:true e revise antes.",
+        "O token fica gravado no .git/config na forma https://token@github.com/... — qualquer um com acesso ao disco lê a credencial.",
+        "Repositório criado sem .gitignore versiona node_modules, backups e arquivos .bak."
+      ],
+      "prompt": "Crie um repositório novo no GitHub e suba o primeiro commit.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nNOME DO REPOSITÓRIO: <REPO>\nCONTA: olirumtecapp-debug\nTOKEN: <TOKEN_GITHUB>\nGIT: C:\\Program Files\\Verdent\\resources\\app.asar.unpacked\\node_modules\\dugite\\git\\cmd\\git.exe\n\nPASSOS:\n1. Verifique se o repositório já existe (GET https://api.github.com/repos/olirumtecapp-debug/<REPO>). Se existir, NÃO recrie.\n2. Crie via POST https://api.github.com/user/repos com private:true.\n3. Crie um .gitignore antes do primeiro commit (node_modules, .vercel, backups, *.zip, *.bak, *.log, /data/).\n4. git init ; git config user.name ; git config user.email ; git remote add origin ; git add -A ; git commit ; git branch -M main ; git push -u origin main.\n5. Confirme com git log --oneline -1 e git remote -v.\n\nNÃO use --force e NÃO versione credenciais."
+    },
+    {
+      "id": "vercel-json-rewrite",
+      "icon": "⚙️",
+      "name": "Configurar vercel.json (rotas e rewrite)",
+      "category": "Git & Deploy",
+      "status": "atencao",
+      "summary": "Define como a Vercel resolve as rotas. Para SPA de página única, tudo cai no index.html; para site com páginas separadas, é preciso deixar o filesystem ser consultado primeiro.",
+      "whenToUse": "Ao criar um projeto novo na Vercel ou ao adicionar uma página extra a um SPA que redireciona tudo para o index.",
+      "prerequisites": [
+        "Saber se o projeto é página única (SPA) ou tem páginas separadas",
+        "Saber se existem funções em /api (nesse caso elas têm de ficar fora do rewrite)"
+      ],
+      "steps": [
+        "SPA puro com API: {\"version\":2,\"rewrites\":[{\"source\":\"/((?!api/).*)\",\"destination\":\"/index.html\"}]} — padrão do Escola da Fé e do Catecismo.",
+        "SPA sem API: {\"version\":2,\"cleanUrls\":true,\"rewrites\":[{\"source\":\"/(.*)\",\"destination\":\"/index.html\"}]} — padrão do Inglês.",
+        "Site com páginas separadas: usar routes com {\"handle\":\"filesystem\"} antes do catch-all, como no auditoria_projetos.",
+        "Commitar o vercel.json e conferir /api/... e a página nova em produção."
+      ],
+      "evidence": [
+        "Escola da Fé e Catecismo: source \"/((?!api/).*)\"",
+        "Inglês e CodeLogic: cleanUrls true",
+        "auditoria_projetos: routes com handle filesystem + catch-all (é o que permite servir /processos.html)"
+      ],
+      "pitfalls": [
+        "Com rewrite de \"/(.*)\" para /index.html, qualquer página nova é engolida pelo index até o filesystem ser consultado primeiro.",
+        "No Escola da Fé o rewrite exclui /api/, mas o projeto não tem funções em /api na Vercel — o resultado é 404 nas APIs em produção."
+      ],
+      "prompt": "Revise e ajuste o vercel.json do projeto <NOME_DO_PROJETO>.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nTIPO: <SPA puro | SPA com /api | site com páginas separadas>\n\nREGRAS:\n- SPA com funções serverless em /api: {\"version\":2,\"rewrites\":[{\"source\":\"/((?!api/).*)\",\"destination\":\"/index.html\"}]}\n- SPA sem funções: {\"version\":2,\"cleanUrls\":true,\"rewrites\":[{\"source\":\"/(.*)\",\"destination\":\"/index.html\"}]}\n- Site com páginas separadas (HTMLs distintos): usar routes na ordem 1) {\"handle\":\"filesystem\"} 2) catch-all para /index.html\n\nDEPOIS DE ALTERAR:\n1. Commit + push.\n2. Em produção, teste: uma página estática nova, uma rota inexistente e cada endpoint /api/... existente.\n3. Me mostre o resultado de cada teste.\n\nNão altere rotas que já estão funcionando sem me avisar."
+    },
+    {
+      "id": "webhook-asaas",
+      "icon": "💳",
+      "name": "Webhook Asaas / PIX ponta a ponta",
+      "category": "Pagamento",
+      "status": "atencao",
+      "summary": "Recebe a confirmação de pagamento do Asaas e libera matrícula/VIP. O frontend faz polling para saber que o PIX caiu.",
+      "whenToUse": "Ao configurar apoio/matrícula paga em um projeto ou ao investigar 'paguei e não liberou'.",
+      "prerequisites": [
+        "Conta Asaas com webhook apontando para a URL de produção",
+        "Endpoint publicado (função em /api na Vercel)"
+      ],
+      "steps": [
+        "Criar o endpoint POST/GET (ex.: api/asaas-webhook.js) com CORS e cabeçalho asaas-access-token.",
+        "No POST, aceitar apenas PAYMENT_RECEIVED, PAYMENT_CONFIRMED e PAYMENT_RECEIVED_IN_CASH.",
+        "Guardar a aprovação num array em memória (recentApprovals) com TTL de 15 minutos e limite de 50 itens.",
+        "No GET, responder {approved:true,...} quando existir aprovação recente compatível com value e/ou email.",
+        "Cadastrar no painel do Asaas a URL do webhook: https://<DOMINIO>.vercel.app/api/asaas-webhook",
+        "Testar: GET no endpoint (deve responder approved:false), depois simular POST com um evento aprovado e confirmar que o GET passa a responder approved:true.","Rodar POST /api/student/reset-supported para limpar o estado de teste."
+      ],
+      "evidence": [
+        "api/asaas-webhook.js em codelogic-pro e ingles-passo-a-passo; server.mjs:273-329 no Escola da Fé",
+        "Teste real: codelogic-pro-ead.vercel.app/api/asaas-webhook e ingles-passo-a-passo.vercel.app/api/asaas-webhook respondem approved:false",
+        "Configuração da PIX: ASAAS_APOIO_CONFIG no Escola da Fé (checkoutUrl + payload copia-e-cola)"
+      ],
+      "pitfalls": [
+        "recentApprovals vive na memória do processo: em serverless cada invocação pode cair em outra instância e o polling nunca vê a aprovação. Para produção séria, persistir (Firestore, GitHub-as-DB ou banco).",
+        "No Escola da Fé o webhook está no server.mjs, que não roda na Vercel: /api/asaas-webhook responde 404 em produção.",
+        "Sem validar o token do Asaas, qualquer um pode postar um evento falso de pagamento aprovado."
+      ],
+      "prompt": "Verifique e corrija o webhook de pagamento Asaas do projeto <NOME_DO_PROJETO>.\n\nPRODUÇÃO: https://<DOMINIO>.vercel.app\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nARQUIVO DO ENDPOINT: <api/asaas-webhook.js | server.mjs>\n\nCOMO DEVE FUNCIONAR:\n- POST /api/asaas-webhook recebe do Asaas e aceita PAYMENT_RECEIVED, PAYMENT_CONFIRMED, PAYMENT_RECEIVED_IN_CASH.\n- Guarda a aprovação com TTL de 15 minutos e no máximo 50 itens.\n- GET /api/asaas-webhook?value=VALOR&since=TIMESTAMP responde {approved:true|false} para o polling do frontend.\n- Cadastro no Asaas: https://<DOMINIO>.vercel.app/api/asaas-webhook\n\nTAREFAS:\n1. Confirme que o endpoint está publicado (GET deve responder approved:false, nunca 404).\n2. Se o webhook estiver em server.mjs, ele NÃO roda na Vercel — migre para uma função em /api.\n3. Garanta validação do token do Asaas no POST.\n4. Teste GET, simule POST aprovado, confirme a liberação e depois limpe o estado de teste.\n5. Me mostre a saída de cada teste.\n\nNÃO coloque token ou chave no código."
+    },
+    {
+      "id": "caixa-postal",
+      "icon": "📬",
+      "name": "Caixa postal / contato com a coordenação",
+      "category": "Aluno",
+      "status": "ok",
+      "summary": "Canal de mensagens entre o aluno e a coordenação: mural de comunicados, envio de dúvida e resposta no painel admin.",
+      "whenToUse": "Ao criar a área de contato de um curso ou ao investigar mensagem que não chegou.",
+      "prerequisites": [
+        "Backend de mensagens publicado",
+        "Área admin para ler e responder"
+      ],
+      "steps": [
+        "Escola da Fé: GET /api/inbox/list?email= devolve {broadcasts, userMessages}; POST /api/inbox/send grava {studentName, studentEmail, subject, category, message} em data/inbox.json.",
+        "Catecismo: api/contact/list, api/contact/send e api/contact/update-status gravando em data/contact_messages.json via api/_db.js.",
+        "No frontend, carregar o mural na abertura do modal e mesclar com as mensagens de boas-vindas locais (localStorage).",
+        "No admin, listar as mensagens e permitir mudar o status (recebida, respondida).",
+        "Testar o envio com um e-mail de teste e conferir se a mensagem aparece na lista do admin."
+      ],
+      "evidence": [
+        "Escola da Fé: InboxManager.loadInbox() + localStorage escola_da_fe_welcome_msgs, dados em data/inbox.json",
+        "Catecismo: api/contact/list|send|update-status + tabela de mensagens no painel admin",
+        "Teste real: catecismo-catolico.vercel.app/api/contact/list responde {\"success\":true,\"total\":0,...}"
+      ],
+      "pitfalls": [
+        "No Escola da Fé as APIs vivem no server.mjs e respondem 404 na Vercel — a caixa postal funciona só rodando local.",
+        "A pasta /data/ está no .gitignore: os arquivos de mensagens não sobem para o GitHub e o filesystem da Vercel é efêmero, então a mensagem pode se perder.",
+        "Sem fallback local, o modal fica em 'Carregando comunicados pastorais...' quando a API falha."
+      ],
+      "prompt": "Verifique e corrija o sistema de caixa postal / contato do projeto <NOME_DO_PROJETO>.\n\nPRODUÇÃO: https://<DOMINIO>.vercel.app\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nARQUIVO PRINCIPAL: <index.html>\nDADOS: <data/inbox.json | data/contact_messages.json>\n\nCOMO DEVE FUNCIONAR:\n- O aluno abre o mural, lê os comunicados e envia dúvida (assunto + categoria + mensagem).\n- O envio grava no backend e aparece na lista do aluno ('Minhas Dúvidas').\n- O admin vê as mensagens e consegue marcar como respondida.\n- Se o servidor falhar, o frontend mostra o conteúdo local e avisa, sem travar em 'Carregando'.\n\nTAREFAS:\n1. Teste GET e POST em produção e me mostre a resposta de cada um.\n2. Confirme que o dado realmente persiste (não se perde a cada deploy).\n3. Garanta o fallback local quando a API não responder.\n4. Faça um envio de teste, confirme que aparece no admin e depois remova o teste.\n\nNÃO coloque credenciais no código."
+    },
+    {
+      "id": "sync-cross-device",
+      "icon": "🔄",
+      "name": "Sync de progresso cross-device",
+      "category": "Banco de Dados",
+      "status": "atencao",
+      "summary": "Faz o progresso do aluno acompanhar o e-mail dele entre celular e computador, em vez de ficar preso no localStorage de um navegador.",
+      "whenToUse": "Quando o aluno reclama que 'perdeu o progresso' ao trocar de aparelho.",
+      "prerequisites": [
+        "Aluno identificado por e-mail",
+        "Backend de leitura e escrita acessível em produção"
+      ],
+      "steps": [
+        "No cadastro/matrícula, gravar o aluno (POST /api/student/register) com o progresso atual.",
+        "A cada saveProgress(), salvar no localStorage E enviar em segundo plano (POST /api/student/sync).",
+        "No login/abertura, buscar GET /api/student/load?email= e restaurar.",
+        "Ao restaurar, mesclar pelo critério de maior XP e maior número de módulos concluídos, nunca sobrescrever com o mais pobre.",
+        "Testar em dois navegadores com o mesmo e-mail e confirmar que o progresso acompanha."
+      ],
+      "evidence": [
+        "Escola da Fé: /api/student/register, /api/student/sync, /api/student/load?email=, dados em data/students.json",
+        "Catecismo: api/cloud-sync/save.js e api/cloud-sync/load.js com api/_db.js gravando data/cloud_users.json no próprio GitHub",
+        "Inglês e CodeLogic: sincronização via Cloud Firestore (projeto expedicao-brasil)"
+      ],
+      "pitfalls": [
+        "No Escola da Fé o sync é server.mjs — 404 na Vercel, então o cross-device não funciona em produção.",
+        "Mesclar sem regra clara pode fazer o progresso do aluno regredir.",
+        "Gravar estado do aluno em arquivo do repositório (Catecismo) gera um commit por gravação e incha o histórico."
+      ],
+      "prompt": "Verifique e corrija a sincronização cross-device do progresso no projeto <NOME_DO_PROJETO>.\n\nPRODUÇÃO: https://<DOMINIO>.vercel.app\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nARQUIVO PRINCIPAL: <index.html>\n\nCOMO DEVE FUNCIONAR:\n- saveProgress() grava no localStorage E envia para o servidor (POST /api/student/sync).\n- Na abertura, GET /api/student/load?email=EMAIL restaura o progresso do aluno.\n- O merge usa o progresso com MAIOR XP e MAIS módulos concluídos — nunca o mais pobre.\n\nTAREFAS:\n1. Teste os endpoints em produção (register, sync, load) e me mostre as respostas.\n2. Teste em dois navegadores com o mesmo e-mail e comprove que o progresso acompanha.\n3. Corrija o merge se ele puder regredir progresso.\n4. Se as APIs não existirem em produção, me diga claramente o que falta e proponha o caminho (função em /api ou banco externo).\n\nNÃO apague progresso de nenhum aluno."
+    },
+    {
+      "id": "matricula-aluno",
+      "icon": "✍️",
+      "name": "Matrícula de aluno",
+      "category": "Aluno",
+      "status": "ok",
+      "summary": "Modal de cadastro inicial (nome + e-mail, sem senha) que cria a identidade do aluno e libera a jornada.",
+      "whenToUse": "Ao configurar um curso novo ou ao ajustar o primeiro acesso.",
+      "prerequisites": [
+        "Modal de matrícula no HTML",
+        "Endpoint de registro (ou fallback local)"
+      ],
+      "steps": [
+        "Na abertura, verificar se existe aluno salvo; se não existir, abrir o modal após um pequeno atraso.",
+        "No envio, validar nome completo e e-mail, salvar no localStorage e chamar POST /api/student/register.",
+        "Avisar no formulário que o nome digitado é o que sairá no certificado.",
+        "Registrar a data de matrícula e o último acesso.",
+        "Testar: abrir em janela anônima, matricular e confirmar que o modal não reabre."
+      ],
+      "evidence": [
+        "Escola da Fé: modal id='enrollment-modal', checkEnrollmentOnStart(), handleEnrollmentSubmit(), POST /api/student/register",
+        "Chave do aluno no localStorage: escola_da_fe_student",
+        "Catecismo: 4 usuários reais na base (visible em /api/admin/community-metrics)"
+      ],
+      "pitfalls": [
+        "Modal cortado em tela pequena já quebrou esse fluxo antes — no Escola da Fé há três commits só corrigindo isso.",
+        "Login sem senha significa que qualquer pessoa que saiba o e-mail acessa aquele progresso."
+      ],
+      "prompt": "Verifique e corrija o sistema de matrícula do projeto <NOME_DO_PROJETO>.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nARQUIVO PRINCIPAL: <index.html>\n\nCOMO DEVE FUNCIONAR:\n- Sem aluno no localStorage, o modal de matrícula abre sozinho no primeiro acesso.\n- Login = nome completo + e-mail (sem senha).\n- O envio salva localmente, registra a data e chama POST /api/student/register.\n- Se o backend falhar, o aluno continua matriculado localmente (fallback).\n\nTAREFAS:\n1. Teste em janela anônima: matrícula abre, envia, salva e não reabre.\n2. Teste em 320px, 375px e 414px de largura e confirme que o modal não corta nem gera scroll horizontal.\n3. Confirme que o nome vai para o certificado exatamente como digitado.\n\nNÃO apague matrícula existente."
+    },
+    {
+      "id": "painel-admin",
+      "icon": "🛠️",
+      "name": "Painel administrativo: acesso, senha e reset",
+      "category": "Admin",
+      "status": "atencao",
+      "summary": "Área restrita para ver alunos, mensagens e publicar comunicados. Cada projeto usa um mecanismo de entrada diferente.",
+      "whenToUse": "Ao acessar o painel, trocar a senha ou investigar quem consegue entrar.",
+      "prerequisites": [
+        "Saber qual mecanismo o projeto usa",
+        "Senha atual em mãos"
+      ],
+      "steps": [
+        "Escola da Fé: atalho Alt+Shift+M, com ADMIN_USER e ADMIN_PASS definidos no próprio HTML.",
+        "Catecismo: promptAdminAccess() com PIN guardado em localStorage 'catecismo_admin_pin' (padrão definido no código), com função para trocar o PIN.",
+        "CodeLogic: tela ADMIN_LOGIN com o usuário da coordenação e senha gravados na base local de professores.",
+        "Inglês: liberação por e-mail do dono (lista ADMIN_DEV_EMAILS) mais uma flag de sessão no localStorage/sessionStorage.",
+        "Para resetar acesso: limpar a chave de sessão/PIN no localStorage e entrar de novo."
+      ],
+      "evidence": [
+        "Escola da Fé: index.html linhas 12866-12867 (ADMIN_USER/ADMIN_PASS) e 12906 (verificação)",
+        "Catecismo: index.html linha 7791 (PIN padrão) e 7798 (gravação do novo PIN)",
+        "CodeLogic: index.html linha 2777 (usuário da coordenação com senha)",
+        "Inglês: index.html linha 3202 (ADMIN_DEV_EMAILS) e elevate_admin_session"
+      ],
+      "pitfalls": [
+        "Todas as senhas estão no JavaScript do cliente: qualquer visitante lê com Ctrl+U. Isso não é autenticação de verdade — é só uma trava de conveniência.",
+        "O repositório é público, então a senha do painel também está no GitHub.",
+        "Não existe registro de quem acessou o painel."
+      ],
+      "prompt": "Revise o painel administrativo do projeto <NOME_DO_PROJETO>.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nARQUIVO PRINCIPAL: <index.html>\nMECANISMO ATUAL: <atalho | PIN | usuario/senha | lista de e-mail>\n\nTAREFAS:\n1. Confirme como o painel é aberto e onde a credencial está no código.\n2. Teste o acesso correto e o acesso errado.\n3. Liste as abas/funções do painel e confirme que cada uma carrega dados reais.\n4. Me diga em qual linha está a credencial e o risco de ela ser pública.\n\nSOMENTE DIAGNÓSTICO nesta rodada: NÃO altere a senha, NÃO troque o mecanismo e NÃO faça commit de credencial. Aguarde minha autorização para a parte de segurança."
+    },
+    {
+      "id": "gamificacao",
+      "icon": "🏆",
+      "name": "Progresso, XP, streak, missões e meta semanal",
+      "category": "Aluno",
+      "status": "ok",
+      "summary": "Motor de gamificação: XP, níveis, conquistas, ofensiva (streak) e missões, tudo salvo no localStorage.",
+      "whenToUse": "Ao ajustar recompensas, corrigir streak que não conta ou missão que não fecha.",
+      "prerequisites": [
+        "Conhecer a chave de progresso usada pelo projeto"
+      ],
+      "steps": [
+        "Na inicialização, ler a chave de progresso e preencher os campos ausentes (migração), sem zerar nada do aluno.",
+        "Definir o formato oficial: completedModules, badges, xp, quizHistory, perfectQuizzes, studyDates, missions {m1..m4} e weeklyGoal {weekKey, target, completed}.",
+        "Registrar XP ao concluir módulo e ao acertar questão, com bônus de quiz perfeito e de etapa concluída, sem dar a mesma recompensa duas vezes.",
+        "Contar o streak por dias consecutivos REAIS de estudo: só gravar a data quando houver atividade, nunca só por abrir a página.",
+        "Na meta semanal, guardar a chave da semana e reiniciar o contador quando virar a semana, sem contar o mesmo módulo duas vezes.",
+        "Validar: concluir um módulo, fechar e reabrir a página e confirmar que XP, streak, missão e meta continuam lá."
+      ],
+      "evidence": [
+        "Escola da Fé: chave 'escola_da_fe_progress', funções migrateProgress() e saveProgress(), missões m1 a m4, meta de 5 módulos por semana",
+        "Catecismo e CodeLogic: XP e medalhas, com certificado liberado por aproveitamento (regra dos 70% no CodeLogic)",
+        "Inglês: streak, XP, gemas e vidas (localStorage com prefixo elevate_)"
+      ],
+      "pitfalls": [
+        "Recompensa creditada de novo a cada reabertura infla o XP e desmoraliza a conquista.",
+        "Streak contado por abertura de página cria ofensiva artificial.",
+        "Salvar sem migrar os campos novos apaga ou ignora o progresso antigo do aluno."
+      ],
+      "prompt": "Verifique e corrija a gamificação do projeto <NOME_DO_PROJETO>.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nARQUIVO PRINCIPAL: <index.html>\nCHAVE DE PROGRESSO: <CHAVE_NO_LOCALSTORAGE>\n\nESTRUTURA ESPERADA: completedModules, badges, xp, quizHistory, perfectQuizzes, studyDates, missions {m1,m2,m3,m4}, weeklyGoal {weekKey, target, completed}.\n\nREGRAS:\n- Migrar campos ausentes SEM apagar progresso existente.\n- XP só uma vez por conquista; nada de recompensa duplicada.\n- Streak = dias consecutivos com atividade real, nunca por abrir a página.\n- Meta semanal reinicia na virada da semana e não conta o mesmo módulo duas vezes.\n\nTAREFAS:\n1. Leia o código atual e me diga o que já funciona e o que está incompleto.\n2. Corrija o que estiver errado.\n3. Teste: concluir módulo, recarregar a página e comprovar que XP, streak, missão e meta persistem.\n4. Me mostre os valores antes e depois do teste."
+    },
+    {
+      "id": "validacao-integridade",
+      "icon": "✅",
+      "name": "Validação de integridade do conteúdo",
+      "category": "Infra",
+      "status": "ok",
+      "summary": "Checagem automática que roda ao abrir o app e confirma que etapas, módulos, questões e alternativas estão completos e corretos.",
+      "whenToUse": "Depois de mexer em conteúdo, questões ou estrutura de etapas/módulos.",
+      "prerequisites": [
+        "Estrutura de dados conhecida (etapas, módulos, questões)"
+      ],
+      "steps": [
+        "Conferir as quantidades: etapas, módulos e total de questões.",
+        "Conferir cada módulo: quantidade exata de questões, campos obrigatórios presentes e identificador de etapa existente.",
+        "Conferir cada questão: quatro alternativas e exatamente uma correta.",
+        "Imprimir o resultado no console e falhar de forma visível quando algo estiver errado."
+      ],
+      "evidence": [
+        "Escola da Fé: 10 etapas (etp1..etp10), 50 módulos, 250 questões, 5 por módulo, 4 alternativas e 1 correta — verificado por script",
+        "Nenhum placeholder restante: função genérica de pergunta e textos 'Pergunta N do módulo X' ausentes",
+        "Etapa 6 usa o identificador etp6 e nenhum módulo aponta para etapa inexistente"
+      ],
+      "pitfalls": [
+        "Validar apenas a quantidade esconde campo faltando ou duas respostas corretas na mesma questão.",
+        "Identificador de etapa errado deixa o módulo invisível ou bloqueado para sempre."
+      ],
+      "prompt": "Rode uma validação de integridade real no projeto <NOME_DO_PROJETO>.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nARQUIVO PRINCIPAL: <index.html>\n\nVERIFIQUE:\n1. Quantidade de etapas, de módulos e total de questões.\n2. Cada módulo: questões na quantidade exata, campos obrigatórios preenchidos (objetivo, teoria, pontos-chave, ensinamento da Igreja, reflexão, fontes, quiz) e identificador de etapa existente.\n3. Cada questão: 4 alternativas e exatamente 1 correta.\n4. Busca por placeholders e por função genérica que fabrica pergunta.\n5. Identificadores órfãos (módulo apontando para etapa que não existe).\n\nENTREGA: relatório com o número encontrado em cada item e a lista exata de problemas, se houver. Não corrija nada ainda — só me mostre o diagnóstico."
+    },
+    {
+      "id": "servidor-local",
+      "icon": "🖥️",
+      "name": "Rodar o projeto localmente (node server.mjs)",
+      "category": "Infra",
+      "status": "ok",
+      "summary": "Sobe o servidor Node do projeto na máquina para testar APIs, áudio e persistência antes de publicar.",
+      "whenToUse": "Antes de confiar em qualquer alteração de backend, e sempre no caso do Escola da Fé, cujas APIs só existem nesse servidor.",
+      "prerequisites": [
+        "Node.js instalado (>= 18)",
+        "Porta livre (o padrão do projeto é 8080)"
+      ],
+      "steps": [
+        "Abrir o terminal na pasta do projeto.",
+        "Rodar: node server.mjs (ou npm start, quando existir o script).",
+        "Abrir http://localhost:8080 no navegador.",
+        "Testar as APIs localmente, por exemplo http://localhost:8080/api/student/stats.",
+        "Para testar em outro celular da mesma rede, usar http://<IP_LOCAL>:8080."
+      ],
+      "evidence": [
+        "Escola da Fé: server.mjs com APIs de aluno, caixa postal, webhook Asaas e suporte a Range para MP3 (51 arquivos de áudio em assets/audio)",
+        "Catecismo: script 'start': 'node server.mjs' no package.json",
+        "Escola da Fé em produção: /api/student/stats e /api/asaas-webhook respondem 404 — as APIs só funcionam neste servidor local"
+      ],
+      "pitfalls": [
+        "Confundir local com produção: um endpoint que responde 200 no localhost pode dar 404 no domínio público.",
+        "Deixar o servidor rodando sem perceber e concluir que a Vercel publicou a alteração.",
+        "As portas fixas podem exigir liberação no firewall do Windows."
+      ],
+      "prompt": "Suba o projeto <NOME_DO_PROJETO> localmente para testes.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nENTRADA: node server.mjs (porta 8080)\n\nTAREFAS:\n1. Inicie o servidor em segundo plano e confirme que subiu.\n2. Teste no navegador a página inicial e cada endpoint /api/... existente, mostrando a resposta de cada um.\n3. Rode os testes que eu pedir e me mostre a saída.\n4. Ao terminar, diga explicitamente o que foi testado no LOCAL e o que só existe em produção.\n\nNÃO altere código nesta rodada — só suba, teste e reporte."
+    },
+    {
+      "id": "github-actions",
+      "icon": "🤖",
+      "name": "Automação com GitHub Actions",
+      "category": "Infra",
+      "status": "ok",
+      "summary": "Rotina agendada no GitHub que gera/atualiza dados sozinha e comita no repositório. Hoje existe no Catecismo para a liturgia.",
+      "whenToUse": "Quando algum dado precisa ser atualizado sempre (liturgia, santos, calendário) sem depender de trabalho manual.",
+      "prerequisites": [
+        "Script Node que gera e valida o dado",
+        "Workflow no branch padrão",
+        "Permissão contents: write"
+      ],
+      "steps": [
+        "Criar o script que gera e outro que valida o dado, ambos executáveis por node.",
+        "Criar .github/workflows/<nome>.yml com schedule (cron) e workflow_dispatch para execução manual.",
+        "Declarar permissions: contents: write para o robô poder comitar.",
+        "No passo final, add/commit/push, saindo sem erro quando não houver alteração.",
+        "Testar pelo workflow_dispatch antes de confiar no agendamento."
+      ],
+      "evidence": [
+        "Catecismo: .github/workflows/atualizar-liturgia.yml — cron '17 3 1 * *' (dia 1 de cada mês, America/Sao_Paulo) + workflow_dispatch com entradas year e force",
+        "Scripts correspondentes: scripts/atualizar-liturgia.mjs e scripts/verificar-liturgia.mjs",
+        "Documentação: docs/LITURGIA-AUTOMATICA.txt e docs/SANTOS.md"
+      ],
+      "pitfalls": [
+        "Se o repositório tiver branch protection, o push do robô falha e a automação fica silenciosamente parada.",
+        "Workflow que roda sem validar pode comitar dado inválido — por isso o script de verificação faz parte do passo.",
+        "O agendador do GitHub não é pontual: atrasos de dezenas de minutos são normais."
+      ],
+      "prompt": "Verifique e corrija a automação do GitHub Actions no projeto <NOME_DO_PROJETO>.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nWORKFLOW: .github/workflows/<ARQUIVO>.yml\n\nCOMO DEVE FUNCIONAR:\n- Roda por agendamento (cron) e também por execução manual (workflow_dispatch).\n- Gera o dado com um script, valida com outro e só comita se estiver válido.\n- Usa permissions: contents: write e faz push no branch padrão.\n\nTAREFAS:\n1. Abra o workflow e me explique o que ele faz hoje, passo a passo.\n2. Confirme se o repositório permite push do robô (sem branch protection bloqueando).\n3. Se algo estiver quebrado, corrija e explique o que mudou.\n4. Me diga como testar pela execução manual antes de esperar o agendamento."
+    },
+    {
+      "id": "auditoria-projeto-novo",
+      "icon": "🔍",
+      "name": "Auditar e catalogar um projeto novo",
+      "category": "Admin",
+      "status": "ok",
+      "summary": "Levantamento rápido de um projeto para descobrir onde ele vive, se está no ar e quais recursos tem, e depois cadastrá-lo no painel de auditoria.",
+      "whenToUse": "Ao herdar/organizar um projeto novo ou antes de começar a mexer nele.",
+      "prerequisites": [
+        "Acesso à pasta local",
+        "Acesso ao repositório no GitHub"
+      ],
+      "steps": [
+        "Localizar a pasta e confirmar se existe .git dentro.",
+        "Ler o remote e o último commit, e identificar branch e repositório.",
+        "Ler o vercel.json e descobrir o domínio de produção; abrir a URL e confirmar o título da página.",
+        "Testar os endpoints /api/... em produção para ver o que realmente funciona.",
+        "Procurar os recursos-chave: webhook de pagamento, caixa postal, painel admin, gamificação, PWA e documentação.",
+        "Cadastrar no painel de auditoria com id, nome, categoria, caminho local, repositório, URL e descrição."
+      ],
+      "evidence": [
+        "Campos do cadastro usados no index.html do auditoria: id, name, category, description, localPath, desktopPath, gitRepo, vercelUrl, icon, status",
+        "Nesta auditoria os 4 projetos foram classificados por: git + remote, vercel.json, URL ativa, APIs em produção e presença de docs",
+        "Resultado: 4 repositórios públicos, 4 sites no ar (um deles documentado com a URL errada)"
+      ],
+      "pitfalls": [
+        "Confiar no README: o do Inglês aponta para um domínio que dá 404.",
+        "Supor que a pasta é o repositório: o Inglês tem uma pasta de trabalho sem git e outra versionada em D:\\ProjetosGITHUB.",
+        "Marcar como 'no ar' sem abrir a URL e conferir o título e o conteúdo."
+      ],
+      "prompt": "Faça a auditoria completa do projeto na pasta <CAMINHO_DA_PASTA> e me entregue um relatório.\n\nLEVANTAR:\n1. Existe .git? Qual o remote, branch e último commit?\n2. Conteúdo do vercel.json e qual o domínio de produção.\n3. A URL de produção responde? Qual o título e o tamanho da página?\n4. Cada endpoint /api/... responde o quê em produção?\n5. Tem webhook de pagamento, caixa postal, painel admin, gamificação, PWA e documentação? Liste os arquivos.\n6. Onde estão os dados (localStorage, arquivo, Firestore)?\n\nENTREGA: relatório com evidência de cada item (caminho, linha ou resposta HTTP) e a classificação final: OK, precisa de trabalho ou não verificado.\n\nNÃO altere nenhum arquivo — auditoria é somente leitura."
+    },
+    {
+      "id": "rotacao-credenciais",
+      "icon": "🔐",
+      "name": "Rotacionar credenciais e limpar segredos do código",
+      "category": "Segurança",
+      "status": "pendente",
+      "summary": "Troca tokens e senhas que ficaram expostos e remove o segredo de dentro do código, deixando tudo em variável de ambiente.",
+      "whenToUse": "Quando um token foi commitado, colado em documentação ou está gravado em arquivo versionado. É a prioridade número um deste ecossistema.",
+      "prerequisites": [
+        "Acesso à conta GitHub e à conta Vercel",
+        "Lista dos lugares onde o segredo aparece"
+      ],
+      "steps": [
+        "Revogar o token vazado no GitHub (Settings > Developer settings > Personal access tokens) e criar um novo.",
+        "Substituir todos os usos: remote local do git, scripts de deploy e qualquer arquivo que grave o token.",
+        "Trocar a senha do painel admin em cada projeto e não deixar o valor novo no código.",
+        "No backend, ler o segredo de variável de ambiente (process.env) com fallback de erro, nunca de literal no arquivo.",
+        "Ler o conteúdo do que já está commitado (git grep) para confirmar que não sobrou nada.",
+        "Trocar as chaves de serviço de terceiros que estavam no cliente quando houver risco real."
+      ],
+      "evidence": [
+        "Um arquivo de API do Catecismo está commitado com o token do GitHub montado em pedaços, para escapar de busca automática",
+        "Esse token foi validado como ATIVO, com escopo repo, workflow e delete_repo",
+        "Os quatro repositórios são públicos",
+        "A senha do painel admin aparece em texto puro no HTML servido ao visitante, em pelo menos dois projetos",
+        "A documentação operacional do Escola da Fé guarda token do GitHub, token da Vercel e senha do admin (arquivo ainda não commitado)"
+      ],
+      "pitfalls": [
+        "Trocar o token sem trocar a senha deixa metade do problema de pé.",
+        "Apagar o arquivo não basta: o histórico do git guarda o conteúdo, então o token revogado continua legível.",
+        "Pedir para a IA 'esconder' a credencial dividindo em pedaços só atrapalha quem procura — o valor continua legível.",
+        "Rotacionar sem atualizar os scripts de deploy quebra a publicação seguinte."
+      ],
+      "prompt": "Vamos fazer a limpeza de segurança do projeto <NOME_DO_PROJETO>.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nREPOSITÓRIO: https://github.com/olirumtecapp-debug/<REPO>.git\nO que está exposto: <TOKEN_GITHUB | TOKEN_VERCEL | SENHA_ADMIN | chave de serviço>\n\nPASSOS:\n1. Liste com git grep todos os arquivos (inclusive o histórico) que contenham o segredo.\n2. Me mostre essa lista ANTES de mexer em qualquer coisa.\n3. Eu rotaciono o segredo no painel do serviço e te aviso.\n4. Você substitui todo uso por variável de ambiente (process.env), com erro claro quando a variável faltar.\n5. Atualize também o remote local do git e os scripts de deploy.\n6. Rode git grep de novo e me mostre que não sobrou nenhum.\n7. Confirme que o deploy seguinte continuou funcionando.\n\nNÃO faça commit de nenhum valor novo. NÃO use o valor antigo de novo. Aguarde minha confirmação depois de cada etapa."
+    }
+  ]
+}
