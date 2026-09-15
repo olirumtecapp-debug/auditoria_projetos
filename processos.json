@@ -2,7 +2,7 @@
   "_meta": {
     "title": "Processos Operacionais",
     "subtitle": "Runbook do ecossistema — como repetir cada operação do zero",
-    "version": 2,
+    "version": 3,
     "updated": "2026-09-15",
     "gitlexe": "C:\\Program Files\\Verdent\\resources\\app.asar.unpacked\\node_modules\\dugite\\git\\cmd\\git.exe",
     "gitexe_alt": "C:\\Users\\Murilo Pai\\AppData\\Local\\GitHubDesktop\\app-3.6.4\\resources\\app\\git\\cmd\\git.exe",
@@ -574,6 +574,42 @@
         "Se o dono nao criar a senha dele, a padrao continua valendo para qualquer um que a conheca."
       ],
       "prompt": "Aplique o padrao de senha do painel admin no projeto <NOME_DO_PROJETO>.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nSITE: <URL_DE_PRODUCAO>\nCOLECAO NO FIRESTORE: <SITE>_admin_auth\nSENHA PADRAO ATUAL: <SENHA_ATUAL>\nMINIMO DE CARACTERES: 6\n\nO QUE FAZER:\n1. Criar api/admin/auth.js com GET (status), POST action=login e POST action=set-password, guardando a senha como HMAC-SHA256 com process.env.ADMIN_AUTH_SECRET. Se o projeto ja tiver 12 funcoes, juntar tudo em um arquivo unico.\n2. No HTML, trocar qualquer verificacao de senha feita no navegador por um fetch para /api/admin/auth.\n3. Acrescentar na tela de login o bloco 'Criar ou alterar a senha' (senha atual, nova senha, confirmacao) com aviso de sucesso ou erro.\n4. Remover do HTML a senha, o usuario fixo e qualquer comentario que cite a senha.\n5. Buscar por <SENHA_ATUAL> em TODOS os HTML do projeto (inclusive copias como app.html) e garantir zero ocorrencias.\n6. Conferir que o projeto da Vercel tem ADMIN_AUTH_SECRET configurado e que o projeto esta ligado ao repositorio do GitHub.\n7. Publicar e testar em producao: senha errada (bloqueia), senha atual (libera), criar senha nova, entrar com a nova, e ao final remover a senha de teste para devolver o estado anterior.\n\nPROTOCOLO: backup local antes de alterar, commit + push, validar no ar e me entregar os resultados de cada teste."
+    },
+    {
+      "id": "painel-admin-metricas",
+      "icon": "📊",
+      "name": "Painel admin com métricas da turma",
+      "category": "Admin",
+      "status": "ok",
+      "summary": "Transformar o painel administrativo, que so lista alunos e mensagens, em um painel com numeros: alunos, XP, ofensiva, atividade, ranking de modulos e alunos recentes.",
+      "whenToUse": "Quando o painel mostra apenas listas e voce quer enxergar o engajamento real da turma.",
+      "prerequisites": [
+        "Endpoint de estatisticas no servidor (ou a rota equivalente no roteador unico)",
+        "Painel admin com sistema de abas (switchAdminTab ou equivalente)",
+        "Dados de progresso por aluno (XP, modulos concluidos, ofensiva, ultimo acesso)"
+      ],
+      "steps": [
+        "Estender o endpoint de estatisticas com os campos que faltam: total de XP, XP medio, ofensiva media, ativos hoje, ativos em 7 dias, total de modulos, certificados, ranking de modulos e distribuicao por nivel.",
+        "Calcular no servidor, nunca no navegador: assim o numero vale para todos os alunos e nao depende de quem abre o painel.",
+        "No HTML, acrescentar a aba Metricas no painel e uma secao correspondente.",
+        "Fazer a aba carregar os dados ao ser aberta (chamar a funcao de carga dentro do switchAdminTab).",
+        "Montar tres blocos: cartoes de numeros, barras do ranking de modulos e lista dos alunos recentes.",
+        "Tratar a falha do endpoint com mensagem clara, para nao aparecer tela em branco.",
+        "Publicar e conferir no ar com dados reais; se a turma ainda nao tem movimento, os cartoes aparecem zerados."
+      ],
+      "evidence": [
+        "Escola da Fe: endpoint /api/student/stats com totalXp, avgXp, avgStreak, activeToday, activeLast7Days, rankingModulos e porNivel, mais a aba Metricas no painel admin",
+        "Catecismo: /api/admin/community-metrics alimenta a tabela da comunidade (usuarios, XP, ofensiva, reflexoes)",
+        "ELEVATE: painel do instrutor com acompanhamento dos alunos",
+        "Escola da Fe: primeira leitura real mostrou 1 aluno, 0 XP, 1 ativo hoje e niveis {1: 1}"
+      ],
+      "pitfalls": [
+        "Metrica calculada no navegador mostra apenas o que aquele visitante fez: engana. Sempre calcular no servidor.",
+        "Sem tratar erro de endpoint, o painel fica com 'Carregando...' para sempre.",
+        "Ranking de modulos precisa de quantidade minima por modulo, senao 50 modulos dividem o grafico com um aluno so.",
+        "Cuidado com cache do provedor: a leitura das metricas deve vir com no-store."
+      ],
+      "prompt": "Adicione metricas da turma no painel administrativo do projeto <NOME_DO_PROJETO>.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nSITE: <URL_DE_PRODUCAO>\nENDPOINT DE ESTATISTICAS: <EX.: /api/student/stats>\nCOMO O PAINEL TROCA DE ABA: <FUNCAO_QUE_TROCA_ABA>\n\nO QUE FAZER:\n1. Estender o endpoint de estatisticas com: totalStudents, totalXp, avgXp, avgStreak, activeToday, activeLast7Days, totalCompletedModules, certifiedStudents, avgCompletedPerStudent, rankingModulos (top 8 com id e quantidade) e porNivel.\n2. Calcular tudo no servidor.\n3. Acrescentar a aba Metricas no HTML, com tres blocos: cartoes de numeros, barras do ranking de modulos e lista de alunos recentes (nome, modulos, XP e selo de certificado).\n4. Carregar os dados quando a aba for aberta.\n5. Se o endpoint falhar, mostrar mensagem em vez de tela vazia.\n6. Publicar e me mostrar os numeros reais que a API retornou em producao.\n\nPROTOCOLO: backup local antes de alterar, commit + push, validar no ar e entregar o link testado."
     }
   ]
 }
