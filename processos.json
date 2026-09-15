@@ -2,7 +2,7 @@
   "_meta": {
     "title": "Processos Operacionais",
     "subtitle": "Runbook do ecossistema — como repetir cada operação do zero",
-    "version": 1,
+    "version": 2,
     "updated": "2026-09-15",
     "gitlexe": "C:\\Program Files\\Verdent\\resources\\app.asar.unpacked\\node_modules\\dugite\\git\\cmd\\git.exe",
     "gitexe_alt": "C:\\Users\\Murilo Pai\\AppData\\Local\\GitHubDesktop\\app-3.6.4\\resources\\app\\git\\cmd\\git.exe",
@@ -207,7 +207,8 @@
         "Guardar a aprovação num array em memória (recentApprovals) com TTL de 15 minutos e limite de 50 itens.",
         "No GET, responder {approved:true,...} quando existir aprovação recente compatível com value e/ou email.",
         "Cadastrar no painel do Asaas a URL do webhook: https://<DOMINIO>.vercel.app/api/asaas-webhook",
-        "Testar: GET no endpoint (deve responder approved:false), depois simular POST com um evento aprovado e confirmar que o GET passa a responder approved:true.","Rodar POST /api/student/reset-supported para limpar o estado de teste."
+        "Testar: GET no endpoint (deve responder approved:false), depois simular POST com um evento aprovado e confirmar que o GET passa a responder approved:true.",
+        "Rodar POST /api/student/reset-supported para limpar o estado de teste."
       ],
       "evidence": [
         "api/asaas-webhook.js em codelogic-pro e ingles-passo-a-passo; server.mjs:273-329 no Escola da Fé",
@@ -533,6 +534,46 @@
         "Rotacionar sem atualizar os scripts de deploy quebra a publicação seguinte."
       ],
       "prompt": "Vamos fazer a limpeza de segurança do projeto <NOME_DO_PROJETO>.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nREPOSITÓRIO: https://github.com/olirumtecapp-debug/<REPO>.git\nO que está exposto: <TOKEN_GITHUB | TOKEN_VERCEL | SENHA_ADMIN | chave de serviço>\n\nPASSOS:\n1. Liste com git grep todos os arquivos (inclusive o histórico) que contenham o segredo.\n2. Me mostre essa lista ANTES de mexer em qualquer coisa.\n3. Eu rotaciono o segredo no painel do serviço e te aviso.\n4. Você substitui todo uso por variável de ambiente (process.env), com erro claro quando a variável faltar.\n5. Atualize também o remote local do git e os scripts de deploy.\n6. Rode git grep de novo e me mostre que não sobrou nenhum.\n7. Confirme que o deploy seguinte continuou funcionando.\n\nNÃO faça commit de nenhum valor novo. NÃO use o valor antigo de novo. Aguarde minha confirmação depois de cada etapa."
+    },
+    {
+      "id": "senha-admin-padrao",
+      "icon": "🔐",
+      "name": "Padronizar a senha do painel admin (todos os projetos)",
+      "category": "Segurança",
+      "status": "ok",
+      "summary": "Tirar a senha de dentro do HTML, validar no servidor e dar ao dono uma tela para criar e alterar a propria senha. Padrao ja aplicado nos 4 projetos.",
+      "whenToUse": "Ao criar um painel administrativo novo, ou quando encontrar senha fixa no codigo de qualquer site.",
+      "prerequisites": [
+        "Projeto na Vercel com funcoes em /api (ou o roteador unico)",
+        "Firestore do projeto expedicao-brasil (sem segredo no codigo)",
+        "Variavel ADMIN_AUTH_SECRET criada no projeto da Vercel (64 caracteres)",
+        "Tela de login do admin identificada no HTML"
+      ],
+      "steps": [
+        "Criar api/admin/auth.js no projeto: GET devolve se ja existe senha propria; POST com action=login valida; POST com action=set-password troca.",
+        "Guardar a senha no Firestore como HMAC-SHA256 com o segredo do servidor, em uma colecao por site (ex.: escola_admin_auth, catecismo_admin_auth, ingles_admin_auth, codelogic_admin_auth).",
+        "Manter a senha padrao valida apenas no servidor, enquanto o dono nao criar a dele.",
+        "No HTML, trocar a comparacao local (if user === ... && pass === ...) por um fetch para /api/admin/auth.",
+        "Acrescentar na tela de login o bloco Criar ou alterar a senha: senha atual + nova senha + confirmacao.",
+        "Remover do HTML a senha e o usuario fixos, inclusive comentarios com a senha.",
+        "Conferir se o arquivo nao lista a senha: buscar por 16Bl33 e pelo nome da senha antiga em todos os HTML do projeto.",
+        "Publicar (commit + push) e testar em producao: login com a senha atual, senha errada, criar senha nova, login com a nova, e limpar o teste ao final."
+      ],
+      "evidence": [
+        "Escola da Fe: api/admin/login.js + set-password.js + auth-status.js, painel em Alt+Shift+M, senha removida do HTML",
+        "Catecismo: api/admin/auth.js, hash em catecismo_admin_auth, senha removida de index.html e app.html",
+        "ELEVATE (Ingles): api/admin/auth.js, hash em ingles_admin_auth, senha removida de index.html e lingoclone.html",
+        "CodeLogic: api/admin/auth.js, hash em codelogic_admin_auth, 3 senhas fixas removidas do HTML",
+        "Os 4 foram testados em producao: a senha antiga deixa de funcionar depois que o dono cria a propria"
+      ],
+      "pitfalls": [
+        "O plano gratuito da Vercel permite 12 funcoes por deploy: juntar login/senha/status em UM arquivo (ou usar o roteador unico) evita estourar o limite.",
+        "vercel.json com propriedade invalida (ex.: public) faz o build falhar quando o projeto passa a publicar pelo GitHub.",
+        "Projeto nao ligado ao GitHub nao publica: commit e push nao chegam ao site ate ligar o repositorio no projeto.",
+        "Projetos costumam ter copias do site (app.html, lingoclone.html) que tambem ficam publicas e guardam a mesma senha.",
+        "Se o dono nao criar a senha dele, a padrao continua valendo para qualquer um que a conheca."
+      ],
+      "prompt": "Aplique o padrao de senha do painel admin no projeto <NOME_DO_PROJETO>.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nSITE: <URL_DE_PRODUCAO>\nCOLECAO NO FIRESTORE: <SITE>_admin_auth\nSENHA PADRAO ATUAL: <SENHA_ATUAL>\nMINIMO DE CARACTERES: 6\n\nO QUE FAZER:\n1. Criar api/admin/auth.js com GET (status), POST action=login e POST action=set-password, guardando a senha como HMAC-SHA256 com process.env.ADMIN_AUTH_SECRET. Se o projeto ja tiver 12 funcoes, juntar tudo em um arquivo unico.\n2. No HTML, trocar qualquer verificacao de senha feita no navegador por um fetch para /api/admin/auth.\n3. Acrescentar na tela de login o bloco 'Criar ou alterar a senha' (senha atual, nova senha, confirmacao) com aviso de sucesso ou erro.\n4. Remover do HTML a senha, o usuario fixo e qualquer comentario que cite a senha.\n5. Buscar por <SENHA_ATUAL> em TODOS os HTML do projeto (inclusive copias como app.html) e garantir zero ocorrencias.\n6. Conferir que o projeto da Vercel tem ADMIN_AUTH_SECRET configurado e que o projeto esta ligado ao repositorio do GitHub.\n7. Publicar e testar em producao: senha errada (bloqueia), senha atual (libera), criar senha nova, entrar com a nova, e ao final remover a senha de teste para devolver o estado anterior.\n\nPROTOCOLO: backup local antes de alterar, commit + push, validar no ar e me entregar os resultados de cada teste."
     }
   ]
 }
