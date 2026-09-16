@@ -2,7 +2,7 @@
   "_meta": {
     "title": "Processos Operacionais",
     "subtitle": "Runbook do ecossistema — como repetir cada operação do zero",
-    "version": 4,
+    "version": 5,
     "updated": "2026-09-15",
     "gitlexe": "C:\\Program Files\\Verdent\\resources\\app.asar.unpacked\\node_modules\\dugite\\git\\cmd\\git.exe",
     "gitexe_alt": "C:\\Users\\Murilo Pai\\AppData\\Local\\GitHubDesktop\\app-3.6.4\\resources\\app\\git\\cmd\\git.exe",
@@ -296,32 +296,44 @@
     {
       "id": "matricula-aluno",
       "icon": "✍️",
-      "name": "Matrícula de aluno",
+      "name": "Matrícula e acesso seguro do aluno (PIN + código de recuperação)",
       "category": "Aluno",
       "status": "ok",
-      "summary": "Modal de cadastro inicial (nome + e-mail, sem senha) que cria a identidade do aluno e libera a jornada.",
-      "whenToUse": "Ao configurar um curso novo ou ao ajustar o primeiro acesso.",
+      "summary": "Cadastro do aluno com nome e e-mail, PIN opcional, código de recuperação, aviso de e-mail diferente e progresso na nuvem. É o padrão de acesso dos projetos.",
+      "whenToUse": "Ao criar ou revisar o cadastro/acesso de alunos em qualquer projeto.",
       "prerequisites": [
-        "Modal de matrícula no HTML",
-        "Endpoint de registro (ou fallback local)"
+        "Endpoint de cadastro e de leitura do progresso (servidor, Firestore)",
+        "Segredo do servidor configurado (variavel ADMIN_AUTH_SECRET na Vercel)",
+        "Tela de matricula com nome e e-mail",
+        "Tela de restauracao/recuperacao do progresso"
       ],
       "steps": [
-        "Na abertura, verificar se existe aluno salvo; se não existir, abrir o modal após um pequeno atraso.",
-        "No envio, validar nome completo e e-mail, salvar no localStorage e chamar POST /api/student/register.",
-        "Avisar no formulário que o nome digitado é o que sairá no certificado.",
-        "Registrar a data de matrícula e o último acesso.",
-        "Testar: abrir em janela anônima, matricular e confirmar que o modal não reabre."
+        "Cadastrar com nome e e-mail e gravar na nuvem (Firestore), nunca so no navegador.",
+        "Oferecer PIN opcional de 4 a 6 digitos: com PIN, o progresso so carrega com ele. Guardar apenas o hash (HMAC com o segredo do servidor).",
+        "Gerar o CODIGO DE RECUPERACAO na primeira gravacao e mostrar UMA vez (3 letras + 3 numeros, sem I/O/0/1). Guardar apenas o hash.",
+        "Criar endpoint de recuperacao: { email, code } devolve o progresso e, se quiser, permite definir um novo PIN.",
+        "Na leitura do progresso, exigir o PIN quando a conta tiver um: responder precisaPin (sem PIN) e pinInvalido (PIN errado) para a tela tratar.",
+        "Avisar quando o e-mail digitado for diferente do que ja esta salvo naquele aparelho: oferecer entrar com o e-mail que ja tem progresso.",
+        "Permitir trazer o progresso que ficou preso no navegador para a conta (quando a nuvem estiver atras do local, enviar o local).",
+        "Nunca forcar senha/PIN retroativamente: quem ja tem conta continua entrando pelo e-mail e recebe o convite para criar o PIN.",
+        "Testar: sem PIN barra, PIN errado barra, PIN certo libera, codigo recupera, codigo errado bloqueia, e nenhum usuario antigo perde acesso."
       ],
       "evidence": [
-        "Escola da Fé: modal id='enrollment-modal', checkEnrollmentOnStart(), handleEnrollmentSubmit(), POST /api/student/register",
-        "Chave do aluno no localStorage: escola_da_fe_student",
-        "Catecismo: 4 usuários reais na base (visible em /api/admin/community-metrics)"
+        "Escola da Fe: PIN opcional no cadastro, codigo de recuperacao mostrado uma vez, aviso de e-mail diferente, botao recuperar por codigo e sincronizacao cross-device publicada",
+        "Catecismo: PIN e codigo no cloud-sync/save e cloud-sync/load, recuperacao pelo codigo e aviso de e-mail; os 4 usuarios reais continuam entrando sem PIN (conferido: 1310 XP, nada perdido)",
+        "ELEVATE: progresso do aluno salvo e restaurado na nuvem (7 pontos de salvamento ligados)",
+        "CodeLogic: progresso ja era salvo e restaurado por e-mail + senha no Firestore",
+        "Teste em producao nos dois primeiros: matricula com PIN 4321 gera codigo, sem PIN barra, PIN errado barra, codigo troca o PIN e o antigo deixa de valer"
       ],
       "pitfalls": [
-        "Modal cortado em tela pequena já quebrou esse fluxo antes — no Escola da Fé há três commits só corrigindo isso.",
-        "Login sem senha significa que qualquer pessoa que saiba o e-mail acessa aquele progresso."
+        "PIN guardado em texto no banco: sempre hash com segredo do servidor.",
+        "Codigo de recuperacao mostrado mais de uma vez: ele so deve aparecer na criacao (quem perdeu pede outro).",
+        "Forcar PIN/senha para quem ja tem conta bloqueia aluno antigo: usar convite, nunca imposicao.",
+        "Cache curto de leitura (poucos segundos) faz o teste parecer errado logo apos gravar: aguardar antes de conferir.",
+        "Se o aluno gravar sempre no mesmo endereco, a recuperacao precisa aceitar o codigo mesmo sem o PIN antigo.",
+        "Guardar arrays/objetos com chaves contendo ponto, barra ou til: o Firestore recusa esses nomes de campo (o codigo ignora essas chaves)."
       ],
-      "prompt": "Verifique e corrija o sistema de matrícula do projeto <NOME_DO_PROJETO>.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nARQUIVO PRINCIPAL: <index.html>\n\nCOMO DEVE FUNCIONAR:\n- Sem aluno no localStorage, o modal de matrícula abre sozinho no primeiro acesso.\n- Login = nome completo + e-mail (sem senha).\n- O envio salva localmente, registra a data e chama POST /api/student/register.\n- Se o backend falhar, o aluno continua matriculado localmente (fallback).\n\nTAREFAS:\n1. Teste em janela anônima: matrícula abre, envia, salva e não reabre.\n2. Teste em 320px, 375px e 414px de largura e confirme que o modal não corta nem gera scroll horizontal.\n3. Confirme que o nome vai para o certificado exatamente como digitado.\n\nNÃO apague matrícula existente."
+      "prompt": "Padronize o cadastro e o acesso do aluno no projeto <NOME_DO_PROJETO>.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nSITE: <URL_DE_PRODUCAO>\nARMAZENAMENTO: servidor (Firestore) - se hoje estiver no localStorage, migrar\n\nO QUE FAZER:\n1. Cadastro com nome e e-mail gravando na nuvem.\n2. PIN opcional de 4 a 6 digitos (guardar so o hash HMAC com o segredo do servidor). Com PIN, a leitura do progresso passa a exigir o PIN.\n3. Codigo de recuperacao gerado na primeira gravacao, mostrado UMA vez ao aluno (3 letras + 3 numeros, sem I/O/0/1).\n4. Endpoint/acao de recuperacao: { email, code } devolve o progresso e permite definir novo PIN.\n5. Na leitura: responder precisaPin quando faltar o PIN e pinInvalido quando estiver errado.\n6. Aviso na tela quando o e-mail digitado for diferente do que ja esta salvo no aparelho, oferecendo entrar com o antigo.\n7. Opcao de trazer o progresso preso no navegador para a conta.\n8. Nao forcar PIN para quem ja tem conta: apenas convidar.\n9. Testar tudo em producao (sem PIN, PIN errado, PIN certo, recuperar por codigo, codigo errado) e remover os dados de teste no final, confirmando que nenhum usuario antigo perdeu acesso.\n\nPROTOCOLO: backup local antes de alterar, commit + push, validar no ar e me entregar os resultados de cada teste."
     },
     {
       "id": "painel-admin",
