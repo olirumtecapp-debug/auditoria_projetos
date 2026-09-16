@@ -2,7 +2,7 @@
   "_meta": {
     "title": "Processos Operacionais",
     "subtitle": "Runbook do ecossistema — como repetir cada operação do zero",
-    "version": 6,
+    "version": 7,
     "updated": "2026-09-16",
     "gitlexe": "C:\\Program Files\\Verdent\\resources\\app.asar.unpacked\\node_modules\\dugite\\git\\cmd\\git.exe",
     "gitexe_alt": "C:\\Users\\Murilo Pai\\AppData\\Local\\GitHubDesktop\\app-3.6.4\\resources\\app\\git\\cmd\\git.exe",
@@ -225,42 +225,44 @@
     {
       "id": "caixa-postal",
       "icon": "📬",
-      "name": "Caixa postal com ciclo de vida (padrão dos 4 projetos)",
+      "name": "Caixa postal completa (aluno + coordenacao), padrão dos 4 projetos",
       "category": "Aluno",
       "status": "ok",
-      "summary": "Caixa postal de verdade: aluno envia, coordenação lê, responde, arquiva e exclui. Sem mensagem presa para sempre e sem depender do navegador do aluno.",
+      "summary": "Mural de comunicados e canal de mensagens entre aluno e coordenacao, com ciclo de vida dos dois lados: o aluno le, arquiva e exclui da caixa dele; a coordenacao le, responde, arquiva e exclui, sempre mantendo o registro.",
       "whenToUse": "Ao criar ou revisar a caixa postal / contato de qualquer projeto.",
       "prerequisites": [
-        "Endpoint de listagem e de envio da mensagem",
-        "Endpoint único de atualização para as ações (ler, responder, arquivar, excluir)",
-        "Dados no servidor (Firestore), nao no navegador",
-        "Tela do aluno e tela da coordenação"
+        "Endpoint de listagem e de envio no servidor (Firestore)",
+        "Um endpoint unico de atualizacao por acao",
+        "Tela do aluno e tela da coordenacao",
+        "Comunicados oficiais publicados no painel (nao no navegador do aluno)"
       ],
       "steps": [
-        "Definir 4 estados: nova, lida, respondida e arquivada (excluir remove de vez).",
-        "Criar UM endpoint de atualizacao que recebe { id, action } e dispensa criar um arquivo por acao (importante no plano gratuito da Vercel, que limita 12 funcoes).",
-        "Acoes: read (marca lida), reply (grava resposta + data e vira respondida), archive, unarchive e delete.",
-        "Na listagem, devolver as mensagens do aluno separadas em ativas e arquivadas, mais contadores por estado.",
-        "No painel da coordenacao, mostrar filtros (Ativas, Novas, Respondidas, Arquivadas) e os botoes de acao em cada mensagem.",
-        "Na tela do aluno, mostrar o estado da mensagem, exibir a resposta da coordenacao dentro da conversa e permitir arquivar.",
-        "Tratar erro do endpoint com mensagem clara e nunca deixar a tela presa em Carregando.",
-        "Testar o ciclo completo em producao (enviar, lida, responder, arquivar, desarquivar, excluir) e apagar os dados do teste no fim."
+        "Estados da mensagem: nova, lida, respondida e arquivada.",
+        "UM endpoint de atualizacao recebendo { id, action } (evita estourar o limite de 12 funcoes da Vercel).",
+        "Acoes da coordenacao: read, reply, archive, unarchive e delete.",
+        "Acoes do ALUNO: arquivar (sai da lista principal, fica no arquivo) e EXCLUIR (sai da caixa dele, mas continua no painel da coordenacao - usar o campo ocultadaParaAluno).",
+        "A lista do aluno deve ignorar as mensagens com ocultadaParaAluno; a lista da coordenacao mostra todas, com filtros por estado.",
+        "COMUNICADOS VEM DO SERVIDOR: o aviso publicado no painel aparece em todos os aparelhos do aluno. Aviso criado no navegador (localStorage) so aparece naquele aparelho - foi um problema real, corrigido em set/2026.",
+        "Se a API falhar, cair no aviso local como reserva, nunca deixar a caixa vazia sem explicacao.",
+        "Na coordenacao, ter o gerenciador de comunicados: listar os publicados e poder excluir (senao o comunicado fica no ar para sempre).",
+        "Testar em producao: aluno ve, arquiva, exclui (some para ele e continua no painel), coordenacao responde e exclui, e o comunicado aparece em dois aparelhos diferentes."
       ],
       "evidence": [
-        "Escola da Fe: /api/inbox/list, send e update (Firestore escola_messages), filtros e acoes no painel, status e arquivar para o aluno",
-        "Catecismo: /api/contact/list e update-status (Firestore catecismo_contact_messages) com arquivar, desarquivar e excluir; o formato antigo (status/reply) continua valendo",
-        "ELEVATE: ja tinha o ciclo completo no painel (Pendente, Em Analise, Respondida, Arquivada) com filtros, contadores, respostas rapidas e excluir",
-        "CodeLogic: ganhou filtros (Ativas, Aguardando, Respondidas, Arquivadas), arquivar/desarquivar e excluir no painel do instrutor",
-        "Nos 4: a mensagem passa a ter estado, some da vista quando arquivada e pode ser excluida"
+        "Escola da Fe: aluno ve estado/resposta, arquiva e exclui da caixa dele; coordenacao com filtros, responder, arquivar e excluir; gerenciador de comunicados no painel",
+        "Catecismo: update-status com arquivar, desarquivar, excluir e ocultar-para-o-aluno; botao Excluir no cartao do fiel",
+        "ELEVATE: caixa do aluno com filtro de ocultadas e botao Excluir; painel do instrutor com estados e respostas",
+        "CodeLogic: mesma caixa do aluno, com excluir",
+        "Regra confirmada: comunicado publicado no painel aparece no computador e no celular (testado com dois e-mails)"
       ],
       "pitfalls": [
-        "Mensagem guardada no navegador do aluno nao chega a coordenacao e some ao trocar de aparelho: a mensagem tem de ir para o servidor.",
+        "Guardar o aviso no navegador do aluno: o celular nao ve. Comunicado tem de vir do servidor.",
+        "Excluir de verdade quando o aluno pede: a coordenacao perde o historico. O certo e ocultar para o aluno e manter para a coordenacao.",
         "Uma funcao da Vercel por acao estoura o limite de 12 do plano gratuito: use um endpoint de atualizacao unico.",
-        "Excluir sem confirmacao apaga historico por engano: pedir confirmacao sempre.",
-        "Cache de leitura (poucos segundos) faz o teste mostrar lista antiga logo apos o envio: aguardar antes de conferir.",
-        "Arquivar nao pode esconder a mensagem do aluno respondida por engano: manter a aba de arquivadas visivel."
+        "Sem confirmacao, o aluno exclui a conversa sem querer.",
+        "Cache curto de leitura (3s) faz o teste mostrar lista antiga logo apos enviar ou excluir: aguardar antes de conferir.",
+        "Nao deixar a lista presa em \"Carregando\" quando a API falha."
       ],
-      "prompt": "Padronize a caixa postal do projeto <NOME_DO_PROJETO> com ciclo de vida completo.\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nSITE: <URL_DE_PRODUCAO>\nENDPOINTS ATUAIS: <EX.: /api/inbox/list e /api/inbox/send>\nARMAZENAMENTO: servidor (Firestore) - se hoje estiver no localStorage, migrar\n\nESTADOS: nova, lida, respondida, arquivada (excluir remove de vez).\n\nO QUE FAZER:\n1. Criar ou estender UM endpoint de atualizacao: POST { id, action } com as acoes read, reply, archive, unarchive e delete. Nao criar um arquivo por acao (limite de 12 funcoes na Vercel).\n2. Na listagem, devolver as mensagens ativas e as arquivadas separadas, com contadores por estado.\n3. No painel da coordenacao: filtros (Ativas, Novas, Respondidas, Arquivadas) e botoes de acao em cada mensagem (marcar lida, responder, arquivar/desarquivar, excluir com confirmacao).\n4. Na tela do aluno: mostrar o estado, exibir a resposta dentro da conversa e permitir arquivar.\n5. Se as mensagens estiverem no localStorage, migrar para o servidor mantendo o localStorage como copia local de reserva.\n6. Tratar erro de endpoint com mensagem clara, sem tela presa.\n7. Publicar e testar o ciclo completo em producao, apagando os dados de teste no final.\n\nPROTOCOLO: backup local antes de alterar, commit + push, validar no ar e me entregar os resultados de cada teste."
+      "prompt": "Padronize a caixa postal do projeto <NOME_DO_PROJETO> (aluno e coordenacao).\n\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nSITE: <URL_DE_PRODUCAO>\nENDPOINTS ATUAIS: <EX.: /api/inbox/list e /api/inbox/send>\nARMAZENAMENTO: servidor (Firestore)\n\nESTADOS: nova, lida, respondida, arquivada.\n\nO QUE FAZER:\n1. Um endpoint de atualizacao: POST { id, action } com read, reply, archive, unarchive, delete e hide-student.\n2. Listagem devolvendo ativas e arquivadas, com contadores por estado.\n3. COORDENACAO: filtros (Ativas, Novas, Respondidas, Arquivadas) + acoes por mensagem (marcar lida, responder, arquivar/desarquivar, excluir com confirmacao) + gerenciador de comunicados publicados (listar e excluir).\n4. ALUNO: mostrar estado e resposta; botoes Arquivar e Excluir. O Excluir usa hide-student: sai da caixa dele e continua no painel da coordenacao.\n5. COMUNICADOS: sempre do servidor (aparecem em todos os aparelhos). O aviso local e apenas reserva quando a API falha.\n6. Tratar erro de endpoint com mensagem clara, sem tela presa.\n7. Publicar e testar em producao: enviar, responder, arquivar, excluir pelo aluno (conferindo que a coordenacao continua vendo) e ver o comunicado em dois aparelhos. Limpar os dados de teste.\n\nPROTOCOLO: backup local antes de alterar, commit + push, validar no ar e me entregar os resultados de cada teste."
     },
     {
       "id": "sync-cross-device",
