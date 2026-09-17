@@ -2,7 +2,7 @@
   "_meta": {
     "title": "Processos Operacionais",
     "subtitle": "Runbook do ecossistema — como repetir cada operação do zero",
-    "version": 8,
+    "version": 9,
     "updated": "2026-09-17",
     "gitlexe": "C:\\Program Files\\Verdent\\resources\\app.asar.unpacked\\node_modules\\dugite\\git\\cmd\\git.exe",
     "gitexe_alt": "C:\\Users\\Murilo Pai\\AppData\\Local\\GitHubDesktop\\app-3.6.4\\resources\\app\\git\\cmd\\git.exe",
@@ -204,25 +204,27 @@
       "steps": [
         "Criar o endpoint POST/GET (ex.: api/asaas-webhook.js) com CORS e cabeçalho asaas-access-token.",
         "No POST, aceitar apenas PAYMENT_RECEIVED, PAYMENT_CONFIRMED e PAYMENT_RECEIVED_IN_CASH.",
-        "Guardar a aprovação num array em memória (recentApprovals) com TTL de 15 minutos e limite de 50 itens.",
         "No GET, responder {approved:true,...} quando existir aprovação recente compatível com value e/ou email.",
         "Cadastrar no painel do Asaas a URL do webhook: https://<DOMINIO>.vercel.app/api/asaas-webhook",
         "Testar: GET no endpoint (deve responder approved:false), depois simular POST com um evento aprovado e confirmar que o GET passa a responder approved:true.",
-        "Rodar POST /api/student/reset-supported para limpar o estado de teste."
+        "Rodar POST /api/student/reset-supported para limpar o estado de teste.",
+        "Guardar a aprovacao no banco (Firestore) com TTL de 15 minutos para a consulta e limpar as antigas a cada nova notificacao.",
+        "Conceder o acesso no proprio webhook (o e-mail que pagou recebe o beneficio no servidor), sem depender do navegador do aluno."
       ],
       "evidence": [
-        "Escola da Fe: API em funcao na Vercel (lib/handlers/asaas-webhook.js) com aprovacao guardada no FIRESTORE - persistente",
-        "Catecismo, ELEVATE e CodeLogic: api/asaas-webhook.js com aprovacao em MEMORIA do processo",
-        "ELEVATE: o webhook concede o VIP no servidor para o e-mail que pagou (quem paga recebe o acesso ao abrir o app)",
-        "Testado em 17/09/2026: os 4 endpoints no ar respondendo {\"approved\":false} - escoladafe.creativeam.com.br, catecismo.creativeam.com.br, elevate.creativeam.com.br e codelogic.creativeam.com.br",
+        "Escola da Fe: lib/handlers/asaas-webhook.js — aprovacao no FIRESTORE e marca o aluno como apoiador no servidor",
+        "Catecismo: api/asaas-webhook.js + api/_pagamentos.js — aprovacao no FIRESTORE (doacao)",
+        "ELEVATE: api/asaas-webhook.js + api/_pagamentos.js — aprovacao no FIRESTORE e concede o VIP ao e-mail que pagou",
+        "CodeLogic: api/asaas-webhook.js + api/_pagamentos.js — aprovacao no FIRESTORE e concede o VIP no cadastro do aluno que pagou",
+        "Testado em 17/09/2026 nos 4: POST do Asaas -> GET approved:true -> gravado no banco -> limpeza. No ELEVATE conferido tambem o VIP liberado automaticamente",
         "URL a cadastrar no painel do Asaas: https://<dominio do projeto>/api/asaas-webhook"
       ],
       "pitfalls": [
-        "Aprovacao guardada na MEMORIA do processo nao se sustenta em serverless: cada chamada pode cair em outra instancia e o polling nunca ve o pagamento. Hoje isso afeta Catecismo, ELEVATE e CodeLogic; so a Escola da Fe guarda no Firestore.",
-        "O plano gratuito da Vercel limita 12 funcoes: o webhook e uma delas, entao nao criar um arquivo por acao do pagamento.",
+        "Aprovacao guardada na MEMORIA do processo nao se sustenta em serverless: cada chamada pode cair em outra instancia e o polling nunca ve o pagamento. Os 4 projetos agora gravam no Firestore.",
+        "Conceder acesso apenas no navegador do aluno (polling) faz o beneficio se perder se ele fechar a pagina. O certo e conceder no proprio webhook, no servidor.",
+        "PENDENTE CRITICO: codelogic-pro/api/create-pix.js tem a chave de producao do Asaas escrita no codigo (base64) em repositorio publico. Mover para variavel de ambiente e rotacionar a chave no painel do Asaas.",
         "Sem validar o token do Asaas no POST, qualquer um pode postar um evento falso de pagamento aprovado.",
-        "No Escola da Fe o webhook existia no server.mjs, que NAO roda na Vercel (dava 404). Hoje e funcao na Vercel.",
-        "Conceder acesso no aparelho do aluno (e nao no servidor) permite que ele mesmo se promova."
+        "O plano gratuito da Vercel limita 12 funcoes: o webhook e uma delas, entao nao criar um arquivo por acao do pagamento."
       ],
       "prompt": "Verifique e corrija o webhook de pagamento Asaas do projeto <NOME_DO_PROJETO>.\n\nPRODUÇÃO: https://<DOMINIO>.vercel.app\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nARQUIVO DO ENDPOINT: <api/asaas-webhook.js | server.mjs>\n\nCOMO DEVE FUNCIONAR:\n- POST /api/asaas-webhook recebe do Asaas e aceita PAYMENT_RECEIVED, PAYMENT_CONFIRMED, PAYMENT_RECEIVED_IN_CASH.\n- Guarda a aprovação com TTL de 15 minutos e no máximo 50 itens.\n- GET /api/asaas-webhook?value=VALOR&since=TIMESTAMP responde {approved:true|false} para o polling do frontend.\n- Cadastro no Asaas: https://<DOMINIO>.vercel.app/api/asaas-webhook\n\nTAREFAS:\n1. Confirme que o endpoint está publicado (GET deve responder approved:false, nunca 404).\n2. Se o webhook estiver em server.mjs, ele NÃO roda na Vercel — migre para uma função em /api.\n3. Garanta validação do token do Asaas no POST.\n4. Teste GET, simule POST aprovado, confirme a liberação e depois limpe o estado de teste.\n5. Me mostre a saída de cada teste.\n\nNÃO coloque token ou chave no código."
     },

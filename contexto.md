@@ -94,14 +94,16 @@ C:\Program Files\Verdent\resources\app.asar.unpacked\node_modules\dugite\git\cmd
 | ELEVATE | `https://elevate.creativeam.com.br/api/asaas-webhook` |
 | CodeLogic | `https://codelogic.creativeam.com.br/api/asaas-webhook` |
 
-- **Onde a aprovação é guardada hoje:**
+- **Onde a aprovação é guardada (atualizado em 17/09/2026):**
 
 | Projeto | Aprovação | Concede acesso automaticamente |
 |---|---|---|
-| Escola da Fé | Firestore (persiste) | não — marca o aluno como apoiador |
-| ELEVATE | memória do processo | **sim — grava o VIP no servidor para o e-mail que pagou** |
-| Catecismo | memória do processo | não |
-| CodeLogic | memória do processo | não |
+| Escola da Fé | Firestore | **sim — marca o aluno como apoiador no servidor** |
+| ELEVATE | Firestore | **sim — grava o VIP no servidor para o e-mail que pagou** |
+| Catecismo | Firestore | não (doação) |
+| CodeLogic | Firestore | **sim — grava o VIP no cadastro do aluno que pagou** |
+
+- Antes a aprovação ficava na **memória do processo**: em serverless cada chamada pode cair em outra instância e o site nunca via o pagamento (o clássico "paguei e não liberou"). Hoje os quatro gravam no Firestore e liberam o acesso **no próprio webhook**, sem depender do navegador do aluno estar aberto.
 
 - **Teste rápido** (deve responder `approved:false`, nunca 404): abrir a URL de GET com `?value=50` no navegador.
 - **Teste completo**: simular um POST com `PAYMENT_RECEIVED`, conferir que o GET passa a responder `approved:true`, e depois limpar o estado de teste.
@@ -141,8 +143,10 @@ C:\Program Files\Verdent\resources\app.asar.unpacked\node_modules\dugite\git\cmd
 ### 4.6 Pagamento PIX / Asaas (2026-09-17)
 
 - Documentado o contrato do webhook nos 4 projetos e conferido que os 4 endpoints estão **no ar** (`approved:false`, sem 404).
-- O webhook do **ELEVATE** passou a **conceder o VIP no servidor** para o e-mail que pagou — quem paga recebe o acesso ao abrir o app.
-- Registrada a limitação: em Catecismo, ELEVATE e CodeLogic a aprovação fica na **memória do processo** (em serverless o polling pode não ver a aprovação). Só a Escola da Fé guarda no Firestore.
+- **Aprovação migrada da memória para o Firestore nos 4 projetos** — o polling nunca mais perde o pagamento em serverless.
+- **Acesso liberado no próprio webhook** (não depende do aluno estar com a página aberta): ELEVATE e CodeLogic concedem o VIP ao e-mail que pagou; a Escola da Fé marca o aluno como apoiador.
+- Testado ponta a ponta no ELEVATE: pagamento enviado → `approved:true` → **VIP liberado automaticamente**; e nos quatro: aprovação gravada e limpa depois.
+- **Pendente crítico:** `codelogic-pro/api/create-pix.js` tem a **chave de produção do Asaas escrita no código** (base64). O repositório é público, então essa chave precisa ser movida para variável de ambiente na Vercel e depois **rotacionada no painel do Asaas**.
 
 ---
 
