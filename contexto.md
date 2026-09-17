@@ -81,6 +81,31 @@ C:\Program Files\Verdent\resources\app.asar.unpacked\node_modules\dugite\git\cmd
 - Variáveis na Vercel: `RESEND_API_KEY`, `EMAIL_REMETENTE`, `EMAIL_RESPOSTA`.
 - Sem essas variáveis o envio fica desligado e as telas caem no canal manual — sem quebrar.
 
+### 3.5 Pagamento PIX / Asaas (webhook)
+
+- **POST** `/api/asaas-webhook` recebe do Asaas e aceita apenas `PAYMENT_RECEIVED`, `PAYMENT_CONFIRMED` e `PAYMENT_RECEIVED_IN_CASH`.
+- **GET** `/api/asaas-webhook?value=VALOR&since=TIMESTAMP` é a consulta que o frontend faz a cada 5 segundos enquanto o modal do PIX está aberto; responde `{approved:true|false}`.
+- Ao cadastrar no painel do Asaas, a URL é sempre `https://<domínio do projeto>/api/asaas-webhook`:
+
+| Projeto | URL para cadastrar no Asaas |
+|---|---|
+| Escola da Fé | `https://escoladafe.creativeam.com.br/api/asaas-webhook` |
+| Catecismo | `https://catecismo.creativeam.com.br/api/asaas-webhook` |
+| ELEVATE | `https://elevate.creativeam.com.br/api/asaas-webhook` |
+| CodeLogic | `https://codelogic.creativeam.com.br/api/asaas-webhook` |
+
+- **Onde a aprovação é guardada hoje:**
+
+| Projeto | Aprovação | Concede acesso automaticamente |
+|---|---|---|
+| Escola da Fé | Firestore (persiste) | não — marca o aluno como apoiador |
+| ELEVATE | memória do processo | **sim — grava o VIP no servidor para o e-mail que pagou** |
+| Catecismo | memória do processo | não |
+| CodeLogic | memória do processo | não |
+
+- **Teste rápido** (deve responder `approved:false`, nunca 404): abrir a URL de GET com `?value=50` no navegador.
+- **Teste completo**: simular um POST com `PAYMENT_RECEIVED`, conferir que o GET passa a responder `approved:true`, e depois limpar o estado de teste.
+
 ---
 
 ## 4. O que já foi feito
@@ -112,6 +137,12 @@ C:\Program Files\Verdent\resources\app.asar.unpacked\node_modules\dugite\git\cmd
 ### 4.5 Mobile (2026-09-16)
 
 - Tailwind passou a ser servido pelo próprio site nos 4 projetos (era a causa do layout quebrado no celular).
+
+### 4.6 Pagamento PIX / Asaas (2026-09-17)
+
+- Documentado o contrato do webhook nos 4 projetos e conferido que os 4 endpoints estão **no ar** (`approved:false`, sem 404).
+- O webhook do **ELEVATE** passou a **conceder o VIP no servidor** para o e-mail que pagou — quem paga recebe o acesso ao abrir o app.
+- Registrada a limitação: em Catecismo, ELEVATE e CodeLogic a aprovação fica na **memória do processo** (em serverless o polling pode não ver a aprovação). Só a Escola da Fé guarda no Firestore.
 
 ---
 

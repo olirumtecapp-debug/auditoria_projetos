@@ -2,8 +2,8 @@
   "_meta": {
     "title": "Processos Operacionais",
     "subtitle": "Runbook do ecossistema — como repetir cada operação do zero",
-    "version": 7,
-    "updated": "2026-09-16",
+    "version": 8,
+    "updated": "2026-09-17",
     "gitlexe": "C:\\Program Files\\Verdent\\resources\\app.asar.unpacked\\node_modules\\dugite\\git\\cmd\\git.exe",
     "gitexe_alt": "C:\\Users\\Murilo Pai\\AppData\\Local\\GitHubDesktop\\app-3.6.4\\resources\\app\\git\\cmd\\git.exe",
     "protocol": "1) Ponto de restauração local antes de alterar. 2) Não mexer no que já funciona sem autorização. 3) Commit + push no GitHub. 4) Deploy/validar online na Vercel e entregar o link testado.",
@@ -211,14 +211,18 @@
         "Rodar POST /api/student/reset-supported para limpar o estado de teste."
       ],
       "evidence": [
-        "api/asaas-webhook.js em codelogic-pro e ingles-passo-a-passo; server.mjs:273-329 no Escola da Fé",
-        "Teste real: codelogic-pro-ead.vercel.app/api/asaas-webhook e ingles-passo-a-passo.vercel.app/api/asaas-webhook respondem approved:false",
-        "Configuração da PIX: ASAAS_APOIO_CONFIG no Escola da Fé (checkoutUrl + payload copia-e-cola)"
+        "Escola da Fe: API em funcao na Vercel (lib/handlers/asaas-webhook.js) com aprovacao guardada no FIRESTORE - persistente",
+        "Catecismo, ELEVATE e CodeLogic: api/asaas-webhook.js com aprovacao em MEMORIA do processo",
+        "ELEVATE: o webhook concede o VIP no servidor para o e-mail que pagou (quem paga recebe o acesso ao abrir o app)",
+        "Testado em 17/09/2026: os 4 endpoints no ar respondendo {\"approved\":false} - escoladafe.creativeam.com.br, catecismo.creativeam.com.br, elevate.creativeam.com.br e codelogic.creativeam.com.br",
+        "URL a cadastrar no painel do Asaas: https://<dominio do projeto>/api/asaas-webhook"
       ],
       "pitfalls": [
-        "recentApprovals vive na memória do processo: em serverless cada invocação pode cair em outra instância e o polling nunca vê a aprovação. Para produção séria, persistir (Firestore, GitHub-as-DB ou banco).",
-        "No Escola da Fé o webhook está no server.mjs, que não roda na Vercel: /api/asaas-webhook responde 404 em produção.",
-        "Sem validar o token do Asaas, qualquer um pode postar um evento falso de pagamento aprovado."
+        "Aprovacao guardada na MEMORIA do processo nao se sustenta em serverless: cada chamada pode cair em outra instancia e o polling nunca ve o pagamento. Hoje isso afeta Catecismo, ELEVATE e CodeLogic; so a Escola da Fe guarda no Firestore.",
+        "O plano gratuito da Vercel limita 12 funcoes: o webhook e uma delas, entao nao criar um arquivo por acao do pagamento.",
+        "Sem validar o token do Asaas no POST, qualquer um pode postar um evento falso de pagamento aprovado.",
+        "No Escola da Fe o webhook existia no server.mjs, que NAO roda na Vercel (dava 404). Hoje e funcao na Vercel.",
+        "Conceder acesso no aparelho do aluno (e nao no servidor) permite que ele mesmo se promova."
       ],
       "prompt": "Verifique e corrija o webhook de pagamento Asaas do projeto <NOME_DO_PROJETO>.\n\nPRODUÇÃO: https://<DOMINIO>.vercel.app\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nARQUIVO DO ENDPOINT: <api/asaas-webhook.js | server.mjs>\n\nCOMO DEVE FUNCIONAR:\n- POST /api/asaas-webhook recebe do Asaas e aceita PAYMENT_RECEIVED, PAYMENT_CONFIRMED, PAYMENT_RECEIVED_IN_CASH.\n- Guarda a aprovação com TTL de 15 minutos e no máximo 50 itens.\n- GET /api/asaas-webhook?value=VALOR&since=TIMESTAMP responde {approved:true|false} para o polling do frontend.\n- Cadastro no Asaas: https://<DOMINIO>.vercel.app/api/asaas-webhook\n\nTAREFAS:\n1. Confirme que o endpoint está publicado (GET deve responder approved:false, nunca 404).\n2. Se o webhook estiver em server.mjs, ele NÃO roda na Vercel — migre para uma função em /api.\n3. Garanta validação do token do Asaas no POST.\n4. Teste GET, simule POST aprovado, confirme a liberação e depois limpe o estado de teste.\n5. Me mostre a saída de cada teste.\n\nNÃO coloque token ou chave no código."
     },
