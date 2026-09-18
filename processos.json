@@ -63,7 +63,8 @@
       ],
       "pitfalls": [
         "Esquecer a cópia publica a versão antiga e dá a impressão de que o deploy falhou.",
-        "Os dois arquivos podem divergir: o git status do Escola da Fé mostra ambos como modificados separadamente."
+        "Os dois arquivos podem divergir: o git status mostra ambos como modificados separadamente.",
+        "CUIDADO CRÍTICO: Nunca copie um arquivo antigo por cima de um index.html mais recente (ex: lingoclone.html desatualizado sobrescrevendo index.html com novidades da nuvem). Sempre confira datas e quantidade de linhas antes de copiar."
       ],
       "prompt": "Antes de qualquer commit/deploy do projeto <NOME_DO_PROJETO>, execute o passo obrigatório de sincronização:\n\nCopy-Item \"<CAMINHO_DO_ARQUIVO_DE_TRABALHO>\" \"<CAMINHO_DA_PASTA>\\index.html\" -Force\n\nDepois:\n1. Confirme que os dois arquivos têm o mesmo tamanho/hash.\n2. Rode git status e confirme que index.html aparece modificado.\n3. Só então faça o commit.\n\nSe os arquivos divergirem por qualquer motivo, me avise antes de prosseguir."
     },
@@ -372,6 +373,7 @@
         "Inglês: index.html linha 3202 (ADMIN_DEV_EMAILS) e elevate_admin_session"
       ],
       "pitfalls": [
+        "Listar alunos via localStorage faz alunos cadastrados em outros aparelhos sumirem do painel. A aba de alunos deve SEMPRE buscar da nuvem (/api/admin/students).",
         "Todas as senhas estão no JavaScript do cliente: qualquer visitante lê com Ctrl+U. Isso não é autenticação de verdade — é só uma trava de conveniência.",
         "O repositório é público, então a senha do painel também está no GitHub.",
         "Não existe registro de quem acessou o painel."

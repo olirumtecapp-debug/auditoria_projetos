@@ -148,10 +148,34 @@ C:\Program Files\Verdent\resources\app.asar.unpacked\node_modules\dugite\git\cmd
 - Testado ponta a ponta no ELEVATE: pagamento enviado → `approved:true` → **VIP liberado automaticamente**; e nos quatro: aprovação gravada e limpa depois.
 - **Pendente crítico:** `codelogic-pro/api/create-pix.js` tem a **chave de produção do Asaas escrita no código** (base64). O repositório é público, então essa chave precisa ser movida para variável de ambiente na Vercel e depois **rotacionada no painel do Asaas**.
 
+### 4.7 ELEVATE — Sincronização Cloud de Alunos & Correção do Painel ADM (2026-09-17)
+
+- **Causa raiz:** O arquivo `index.html` foi sobrescrito por uma versão legada de `lingoclone.html` (de 15/09), perdendo a função `carregarAlunosDaNuvem` e fazendo o painel ADM depender apenas de `localStorage` local. Com isso, novos cadastros (como o aluno Murilo Martins) sumiram do painel ao trocar de aba ou atualizar.
+- **Dados intactos no Firestore:** O cadastro de alunos na nuvem (`elevate_students`) nunca foi perdido; a falha era puramente de exibição no frontend.
+- **Solução implementada:**
+  - Restaurada a versão moderna de 9.707 linhas de `index.html` a partir do backup `index.html.bak_2026-09-17_11-25`.
+  - Chave Asaas mantida 100% sanitizada (`const ASAAS_API_KEY = "";`).
+  - Funções `refreshAdminAnalyticsData` e `carregarAlunosDaNuvem` refatoradas para consultar **sempre** a rota `/api/admin/students` (Firestore).
+  - Adicionado helper `getElevateApiBase()` para permitir carregar os alunos da nuvem mesmo quando rodando em ambiente local (VSCode Live Server ou `file:///`).
+  - Arquivos `index.html` e `lingoclone.html` sincronizados e idênticos.
+  - Commit e push realizados na branch `main` (`c91a600`) com deploy confirmado na Vercel.
+
+### 4.8 Catecismo — Correção Hagiográfica de Santas & Prompts IA (2026-09-17)
+
+- **Problema:** Na raspagem original dos dados do Vaticano, a abreviação genérica "S." fez com que 43 mulheres santas fossem importadas incorretamente com o prefixo masculino "São" (ex: *São Clara de Assis*, *São Maria Madalena*, *São Marta*, *São Mônica*, *São Faustina*, *São Bárbara*, etc.).
+- **Solução implementada:**
+  - Backup preventivo compactado em `backups/santos_2026_pre_santa_fix_2026-09-17.zip`.
+  - Script automatizado com validação de nomes canônicos femininos, títulos (virgem, abadessa, viúva, freira, imperatriz) e texto biográfico corrigiu as 43 santas para o título oficial **"Santa"** nos arquivos diários de 2026 (`data/santos/2026/`).
+  - Todos os 365 arquivos JSON do ano validados com sucesso.
+  - O painel de auditoria (`test_santos_dinamico.html`) e o gerador de prompts foram adaptados com detecção de gênero, gerando prompts de IA em português e inglês com vestimentas sacras femininas históricas adequadas (hábito de clarissa, véu tradicional, túnicas nobres de mártir, etc.).
+
 ---
 
 ## 5. Armadilhas conhecidas
 
+- **Sobrescrita cega de arquivos gêmeos (`lingoclone.html` -> `index.html`)**: Nunca copiar um arquivo antigo por cima de um mais novo sem antes checar data de modificação e quantidade de linhas. O arquivo principal servido pela Vercel é o `index.html`.
+- **Listagem de alunos baseada em `localStorage`**: O painel ADM nunca deve confiar exclusivamente no cache do navegador local para listar alunos. A listagem deve ser sempre puxada da API do servidor (`/api/admin/students`), caso contrário novos alunos de outros aparelhos somem da tela.
+- **Abreviação italiana "S." em dados religiosos**: Em fontes italianas ou latinas, "S." serve para *San* e *Santa*. Importações cegas transformam mulheres em "São".
 - **PIN dentro do estado do aluno** vira PIN de quem não pediu e trava o acesso. Foi um bug real.
 - **Regra de acesso pelo número bruto da unidade** quebra quando o nível numera as unidades em sequência (caso do espanhol).
 - **Função da Vercel por ação** estoura o limite de 12 do plano gratuito. Use um endpoint com `action`.
