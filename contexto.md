@@ -169,6 +169,17 @@ C:\Program Files\Verdent\resources\app.asar.unpacked\node_modules\dugite\git\cmd
   - Todos os 365 arquivos JSON do ano validados com sucesso.
   - O painel de auditoria (`test_santos_dinamico.html`) e o gerador de prompts foram adaptados com detecção de gênero, gerando prompts de IA em português e inglês com vestimentas sacras femininas históricas adequadas (hábito de clarissa, véu tradicional, túnicas nobres de mártir, etc.).
 
+### 4.9. Catecismo: Caixa Postal Completa e Mural de Comunicados Oficiais (18/09/2026)
+
+- **Contexto**: O Catecismo possuía envio de mensagens pelo fiel, mas faltava o canal oficial de comunicados da coordenação e a capacidade do administrador responder às mensagens diretamente pelo painel (o botão era apenas um link `mailto:`). O usuário solicitou essa funcionalidade para poder enviar comunicados a todos os fiéis sobre a atualização do banco de imagens dos santos com notificação visual para o usuário.
+- **O que foi feito**:
+  - **Firestore / Banco de dados**: Adicionada a coleção `catecismo_broadcasts` e funções `getBroadcastsDatabase()`, `saveBroadcastToDatabase()` e `deleteBroadcastInDatabase()` em `api/_db.js`.
+  - **Ciclo de vida de mensagens**: Suporte à ação `reply` em `api/contact/update-status.js` para registrar a resposta no Firestore, gravar `repliedAt` e mudar o status para `respondido`.
+  - **Endpoint de Comunicados**: Criado `api/admin/broadcasts.js` consolidado (GET para listar, POST para criar e excluir com `action: 'delete'`), mantendo o projeto rigorosamente dentro do limite de 12 funções da Vercel.
+  - **Servidor local**: `server.mjs` atualizado para rotear as funções serverless localmente na porta 3000.
+  - **Painel Administrativo (`index.html`)**: Adicionada seção "Mural de Comunicados Oficiais" com formulário de publicação e listagem com botão de exclusão; na tabela de mensagens recebidas, adicionado botão de ação "💬 Responder" integrado.
+  - **Interface do Fiel (`index.html`)**: Adicionada aba "📢 Mural de Comunicados" dentro da Caixa Postal, badges de não lidos no cabeçalho e menu lateral, e banner na tela inicial ("📢 Novo comunicado da Coordenação") quando houver comunicado não visualizado, limpando o badge assim que o fiel abre o modal.
+
 ---
 
 ## 5. Armadilhas conhecidas

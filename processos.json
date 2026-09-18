@@ -256,7 +256,7 @@
       ],
       "evidence": [
         "Escola da Fe: aluno ve estado/resposta, arquiva e exclui da caixa dele; coordenacao com filtros, responder, arquivar e excluir; gerenciador de comunicados no painel",
-        "Catecismo: update-status com arquivar, desarquivar, excluir e ocultar-para-o-aluno; botao Excluir no cartao do fiel",
+        "Catecismo: caixa postal completa com comunicados no Firestore, resposta direta no painel ADM, aba mural de comunicados e badges/banners de aviso para o fiel (set/2026)",
         "ELEVATE: caixa do aluno com filtro de ocultadas e botao Excluir; painel do instrutor com estados e respostas",
         "CodeLogic: mesma caixa do aluno, com excluir",
         "Regra confirmada: comunicado publicado no painel aparece no computador e no celular (testado com dois e-mails)"
