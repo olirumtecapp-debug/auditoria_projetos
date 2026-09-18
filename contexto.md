@@ -180,10 +180,24 @@ C:\Program Files\Verdent\resources\app.asar.unpacked\node_modules\dugite\git\cmd
   - **Painel Administrativo (`index.html`)**: Adicionada seção "Mural de Comunicados Oficiais" com formulário de publicação e listagem com botão de exclusão; na tabela de mensagens recebidas, adicionado botão de ação "💬 Responder" integrado.
   - **Interface do Fiel (`index.html`)**: Adicionada aba "📢 Mural de Comunicados" dentro da Caixa Postal, badges de não lidos no cabeçalho e menu lateral, e banner na tela inicial ("📢 Novo comunicado da Coordenação") quando houver comunicado não visualizado, limpando o badge assim que o fiel abre o modal.
 
+### 4.10 Catecismo — Sincronização Inteligente (Smart Sync), Compartilhar Evangelho no WhatsApp, Desafio Rápido e Luz Espiritual (18/09/2026)
+
+- **Smart Sync Bidirecional (`CloudSyncManager`)**:
+  - Resolvido o problema de divergência de XP e dias de ofensiva entre smartphone e PC (730 XP no banco vs desatualizado no celular).
+  - O sistema agora faz auto-pull ao iniciar se houver e-mail logado: compara timestamp e XP da nuvem com o local. Se a nuvem tiver mais XP ou for mais recente, mescla e atualiza os stats locais sem sobrescrever reflexões; se o local avançou offline, envia para a nuvem.
+  - No `server.mjs`, as rotas `/api/cloud-sync/save` e `/api/cloud-sync/load` foram unificadas aos handlers oficiais do Firestore, eliminando a divergência com o arquivo local `cloud_users.json`.
+- **Compartilhamento Litúrgico do Evangelho no WhatsApp**:
+  - Adicionado botão de compartilhamento com a fórmula litúrgica da Igreja Católica: *"📖 Proclamação do Evangelho de Jesus Cristo segundo..."*, texto integral e aclamação de encerramento *"— Palavra da Salvação. — Glória a Vós, Senhor."*.
+- **Desafio Rápido do Dia (Home)**:
+  - Card compacto com 1 pergunta rápida rotativa baseada nos módulos do Catecismo (CCC), pontuando +15 XP com som e explicação doutrinária.
+- **Uma Luz para o Seu Dia (Home)**:
+  - Card de acolhimento espiritual com versículo, doutrina do Catecismo, jaculatória/prece e botão de envio rápido no WhatsApp.
+
 ---
 
 ## 5. Armadilhas conhecidas
 
+- **Sincronização unilateral de progresso (apenas PUSH / SAVE no startup)**: se o aplicativo só faz upload do estado local ao abrir, ele nunca puxa pontos conquistados em outro aparelho e pode sobrescrever a nuvem com um estado defasado. A sincronização ao abrir precisa ser inteligente (smart sync com auto-pull e merge).
 - **Sobrescrita cega de arquivos gêmeos (`lingoclone.html` -> `index.html`)**: Nunca copiar um arquivo antigo por cima de um mais novo sem antes checar data de modificação e quantidade de linhas. O arquivo principal servido pela Vercel é o `index.html`.
 - **Listagem de alunos baseada em `localStorage`**: O painel ADM nunca deve confiar exclusivamente no cache do navegador local para listar alunos. A listagem deve ser sempre puxada da API do servidor (`/api/admin/students`), caso contrário novos alunos de outros aparelhos somem da tela.
 - **Abreviação italiana "S." em dados religiosos**: Em fontes italianas ou latinas, "S." serve para *San* e *Santa*. Importações cegas transformam mulheres em "São".
