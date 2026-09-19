@@ -22,7 +22,7 @@ Tudo o que for feito de novo tem de ser atualizado **aqui**. Este é o único lu
 | CodeLogic PRO | `D:\ProjetosGITHUB\codelogic-pro` | `codelogic-pro` | `codelogic.creativeam.com.br` |
 | CreativeAM (portfólio) | `D:\CreativeAM` | (ainda sem repositório remoto) | a publicar |
 | Auditoria + Processos | `D:\ProjetosGITHUB\auditoria_projetos` | `auditoria_projetos` | `auditoria-projetos.vercel.app` |
-| CasaChat (Família) | `D:\Chatfamily` | `chat-familia` | `chat-familia.vercel.app` |
+| CasaChat (Família) | `D:\Chatfamily` | `chat-familia` | `chat.creativeam.com.br` |
 
 Conta GitHub: `olirumtecapp-debug`. Conta Vercel: `creativeam-pij`.
 
