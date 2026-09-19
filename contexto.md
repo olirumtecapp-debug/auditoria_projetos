@@ -22,6 +22,7 @@ Tudo o que for feito de novo tem de ser atualizado **aqui**. Este é o único lu
 | CodeLogic PRO | `D:\ProjetosGITHUB\codelogic-pro` | `codelogic-pro` | `codelogic.creativeam.com.br` |
 | CreativeAM (portfólio) | `D:\CreativeAM` | (ainda sem repositório remoto) | a publicar |
 | Auditoria + Processos | `D:\ProjetosGITHUB\auditoria_projetos` | `auditoria_projetos` | `auditoria-projetos.vercel.app` |
+| CasaChat (Família) | `D:\Chatfamily` | `chat-familia` | `chat-familia.vercel.app` |
 
 Conta GitHub: `olirumtecapp-debug`. Conta Vercel: `creativeam-pij`.
 
@@ -192,6 +193,25 @@ C:\Program Files\Verdent\resources\app.asar.unpacked\node_modules\dugite\git\cmd
   - Card compacto com 1 pergunta rápida rotativa baseada nos módulos do Catecismo (CCC), pontuando +15 XP com som e explicação doutrinária.
 - **Uma Luz para o Seu Dia (Home)**:
   - Card de acolhimento espiritual com versículo, doutrina do Catecismo, jaculatória/prece e botão de envio rápido no WhatsApp.
+
+### 4.11 CasaChat (Chat Privado da Família) — Lançamento, WebRTC & Otimizações Mobile (19/09/2026)
+
+- **Contexto**: Criação do aplicativo de comunicação e mensagens privadas para a família (`D:\Chatfamily`), com foco em privacidade total, chamadas diretas e excelente experiência em smartphones.
+- **Chamadas de Voz e Vídeo WebRTC com Toque Musical**:
+  - Implementado sistema de chamadas P2P de áudio e vídeo com modal interativo (`CallModal.tsx`).
+  - Toque musical de chamada (ringtone / chime) gerado 100% nativo no navegador via Web Audio API (sem carregar MP3s pesados ou depender de conexões lentas).
+  - Controles em tempo real para ativar/desativar microfone e câmera, e alternância entre áudio e vídeo.
+- **Teclado Completo de Emojis Estilo WhatsApp**:
+  - Teclado com abas categorizadas (Smileys, Gestos, Animais, Comidas, Atividades, Objetos) e campo de busca rápida (`EmojiPicker.tsx`).
+- **Otimização de Fotos & Correção de Memória no Smartphone**:
+  - Resolvido o erro de `"insuficiência de memória"` ao enviar fotos tiradas com a câmera do celular: implementado `optimizeImageForChat` com decodificação rápida via `createImageBitmap`, redimensionamento para no máximo 1280px e compressão JPEG para ~150 KB.
+- **Fix de Layout Mobile (100dvh & Scroll Containment)**:
+  - Travamento de viewport em `100dvh` com `position: fixed` e `overscroll-behavior: none` em `html, body, #root`.
+  - Cabeçalho e barra de envio fixos; apenas a área interna de mensagens rola suavemente no mobile.
+- **Publicação & Infraestrutura**:
+  - Repositório oficial criado no GitHub: `https://github.com/olirumtecapp-debug/chat-familia.git`.
+  - Adaptador serverless Vercel configurado em `api/index.ts` e `vercel.json` para deploy direto na Vercel (`chat-familia.vercel.app`).
+  - Backend com tRPC + Express e banco TiDB Serverless em nuvem.
 
 ---
 
