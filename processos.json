@@ -2,8 +2,8 @@
   "_meta": {
     "title": "Processos Operacionais",
     "subtitle": "Runbook do ecossistema — como repetir cada operação do zero",
-    "version": 9,
-    "updated": "2026-09-17",
+    "version": 10,
+    "updated": "2026-09-27",
     "gitlexe": "C:\\Program Files\\Verdent\\resources\\app.asar.unpacked\\node_modules\\dugite\\git\\cmd\\git.exe",
     "gitexe_alt": "C:\\Users\\Murilo Pai\\AppData\\Local\\GitHubDesktop\\app-3.6.4\\resources\\app\\git\\cmd\\git.exe",
     "protocol": "1) Ponto de restauração local antes de alterar. 2) Não mexer no que já funciona sem autorização. 3) Commit + push no GitHub. 4) Deploy/validar online na Vercel e entregar o link testado.",
@@ -276,7 +276,7 @@
       "icon": "🔄",
       "name": "Sync de progresso cross-device",
       "category": "Banco de Dados",
-      "status": "atencao",
+      "status": "ok",
       "summary": "Faz o progresso do aluno acompanhar o e-mail dele entre celular e computador, em vez de ficar preso no localStorage de um navegador.",
       "whenToUse": "Quando o aluno reclama que 'perdeu o progresso' ao trocar de aparelho.",
       "prerequisites": [
@@ -291,14 +291,14 @@
         "Testar em dois navegadores com o mesmo e-mail e confirmar que o progresso acompanha."
       ],
       "evidence": [
-        "Escola da Fé: /api/student/register, /api/student/sync, /api/student/load?email=, dados em data/students.json",
-        "Catecismo: api/cloud-sync/save.js e api/cloud-sync/load.js com api/_db.js gravando data/cloud_users.json no próprio GitHub",
-        "Inglês e CodeLogic: sincronização via Cloud Firestore (projeto expedicao-brasil)"
+        "Escola da Fé: lib/_db.js — dados sincronizados no Cloud Firestore (coleção escola_students no projeto expedicao-brasil) com Smart Sync bidirecional",
+        "Catecismo: api/_db.js — dados sincronizados no Cloud Firestore (coleção catecismo_cloud_users no projeto expedicao-brasil) com SmartSyncManager, unificado local e produção",
+        "ELEVATE e CodeLogic: sincronização via Cloud Firestore (projeto expedicao-brasil)"
       ],
       "pitfalls": [
-        "No Escola da Fé o sync é server.mjs — 404 na Vercel, então o cross-device não funciona em produção.",
-        "Mesclar sem regra clara pode fazer o progresso do aluno regredir.",
-        "Gravar estado do aluno em arquivo do repositório (Catecismo) gera um commit por gravação e incha o histórico."
+        "Antes o Escola da Fé usava server.mjs e o Catecismo gravava JSON no GitHub; ambos foram migrados com sucesso para Cloud Firestore com auto-pull inteligente.",
+        "Mesclar sem regra clara pode fazer o progresso do aluno regredir: sempre manter o maior XP e mais módulos concluídos.",
+        "Sync unilateral que só envia dados ao iniciar pode sobrescrever conquistas feitas em outro dispositivo: o sync deve ser bidirecional (Smart Sync)."
       ],
       "prompt": "Verifique e corrija a sincronização cross-device do progresso no projeto <NOME_DO_PROJETO>.\n\nPRODUÇÃO: https://<DOMINIO>.vercel.app\nPASTA LOCAL: <CAMINHO_DA_PASTA>\nARQUIVO PRINCIPAL: <index.html>\n\nCOMO DEVE FUNCIONAR:\n- saveProgress() grava no localStorage E envia para o servidor (POST /api/student/sync).\n- Na abertura, GET /api/student/load?email=EMAIL restaura o progresso do aluno.\n- O merge usa o progresso com MAIOR XP e MAIS módulos concluídos — nunca o mais pobre.\n\nTAREFAS:\n1. Teste os endpoints em produção (register, sync, load) e me mostre as respostas.\n2. Teste em dois navegadores com o mesmo e-mail e comprove que o progresso acompanha.\n3. Corrija o merge se ele puder regredir progresso.\n4. Se as APIs não existirem em produção, me diga claramente o que falta e proponha o caminho (função em /api ou banco externo).\n\nNÃO apague progresso de nenhum aluno."
     },
@@ -330,8 +330,8 @@
         "Testar tudo em producao e conferir que os alunos antigos continuam entrando sem PIN."
       ],
       "evidence": [
-        "Escola da Fe: PIN, codigo, envio por Resend, canal de ajuda e botao Redefinir no painel (tudo testado no ar)",
-        "Catecismo: envio por e-mail, canal de ajuda e botao Redefinir na tabela da comunidade; os 4 alunos reais entram sem PIN (conferido)",
+        "Escola da Fé: PIN, código, envio por Resend (contato@creativeam.com.br), canal de ajuda e botão Redefinir no painel (tudo testado no ar)",
+        "Catecismo: envio por e-mail com motor duplo (Gmail SMTP contatocreativeam@gmail.com oficial + fallback Resend), canal de ajuda e botão Redefinir na comunidade; fiéis sincronizados no Firestore",
         "ELEVATE: envio por e-mail, codigo por e-mail, canal de ajuda (chega por e-mail) e botao Acesso no painel do instrutor",
         "CodeLogic: envio por e-mail e canal de ajuda; o aluno tem senha propria e recupera sozinho pelo codigo",
         "Bug corrigido: o PIN estava sendo gravado dentro do appState e travou um aluno real no Catecismo - a limpeza devolveu o acesso sem perder progresso"

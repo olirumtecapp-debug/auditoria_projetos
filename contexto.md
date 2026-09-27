@@ -2,7 +2,7 @@
 
 **Leia este documento inteiro antes de trabalhar em qualquer projeto.**
 
-Atualizado em: 2026-09-17
+Atualizado em: 2026-09-27
 
 ---
 
@@ -212,6 +212,45 @@ C:\Program Files\Verdent\resources\app.asar.unpacked\node_modules\dugite\git\cmd
   - Repositório oficial criado no GitHub: `https://github.com/olirumtecapp-debug/chat-familia.git`.
   - Adaptador serverless Vercel configurado em `api/index.ts` e `vercel.json` para deploy direto na Vercel (`chat-familia.vercel.app`).
   - Backend com tRPC + Express e banco TiDB Serverless em nuvem.
+
+### 4.12 Central de Comandos (`D:\CentralComandos`) — Cockpit Unificado de Governança (24/09/2026)
+
+- **Contexto**: Criação de um painel de comando único para gerenciar todas as contas Manus, chaves de API, projetos do ecossistema, ferramentas diárias, atalhos e auditoria integrada.
+- **Estrutura**: React + TypeScript + Vite + Tailwind + Express + tRPC + Drizzle ORM.
+- **Aba de Auditoria e Processos**: Integração direta com a Auditoria de Projetos (`https://auditoria-projetos.vercel.app`) e com o Runbook de Processos Operacionais (`processos.html`), além do Auditor de Imagens de Santos (`http://localhost:3000/auditoria.html`).
+- **Workspace Privado**: Armazenamento criptografado (AES-256-GCM) com exportação e importação completa em JSON (`workspace-store.json`).
+
+### 4.13 MeuAutônomo (`D:\MeuAutonomo`) — Plataforma para Autônomos (26/09/2026)
+
+- **Contexto**: Sistema completo para gestão de profissionais autônomos, orçamentos inteligentes, links de aprovação online via WhatsApp, geração de recibos, controle financeiro e agenda.
+- **Integrações**: Servidor local persistido em JSON, envio de e-mails transacionais com Resend e conformidade com o ecossistema.
+
+### 4.14 Escola da Fé — Migração Completa para Cloud Firestore, Webhook Asaas & PWA (26/09/2026)
+
+- **Camada de Dados Cloud (`lib/_db.js`)**:
+  - Migrado o armazenamento de alunos (`escola_students`), comunicados (`escola_broadcasts`), mensagens (`escola_messages`) e aprovações (`escola_approvals`) para o Cloud Firestore (projeto `expedicao-brasil`).
+  - Progresso dos alunos, conclusão de módulos, XP e certificados sincronizados entre smartphone e computador.
+- **Recuperação de Senha & Acesso**:
+  - Envio de código de recuperação de PIN via Resend (`lib/_email.js`), com canal de ajuda para a coordenação na tela de login.
+  - Reset e redefinição de acesso pelo painel administrativo da coordenação.
+- **Webhook Asaas Server-Side (`lib/handlers/asaas-webhook.js`)**:
+  - Confirmação de PIX/doação com gravação direta da aprovação no Firestore (TTL 15 min) e liberação do selo de apoiador no próprio servidor, sem depender de o aluno manter a página aberta.
+- **Recursos PWA e Mobile**:
+  - Botão de Instalação PWA dedicado para PC e Smartphone (com detecção do evento `beforeinstallprompt` e modal assistivo para iOS/Safari).
+  - Botão de Compartilhamento nativo com fallback automático para cópia de link na área de transferência.
+
+### 4.15 Catecismo — Thesaurus Novenarum, Catálogo Canônico de Santos & Sincronização Cloud (27/09/2026)
+
+- **Thesaurus Novenarum (`novenas.html`)**:
+  - Portal canônico completo com 15 novenas tradicionais e motor litúrgico (`services/liturgicalEngine.js`) que calcula automaticamente novenas ativas, datas de início e festas litúrgicas.
+  - Resolução do problema de imagens de santos (São Geraldo Magela, Santa Edwiges, Nossa Senhora Aparecida, etc.): sincronizadas 100% com o catálogo canônico auditado de santos em alta definição (`assets/img/santos/MM-DD-...png`), eliminando emojis/avatars genéricos.
+  - Implementado `window.handleSaintImageError` resiliente com fallback inteligente para o catálogo local dos 879 santos e arte litúrgica oficial.
+- **Persistência Cloud Firestore & E-mails (`api/_db.js`, `api/_email.js`)**:
+  - Sincronização de progresso e fiéis na coleção `catecismo_cloud_users` no Firestore.
+  - Caixa postal com comunicados da coordenação e mensagens de fiéis (`catecismo_contact_messages`, `catecismo_broadcasts`).
+  - Motor de e-mails com envio direto via **Gmail SMTP Oficial** (`contatocreativeam@gmail.com`) e fallback automático para Resend.
+- **PWA & Compartilhamento**:
+  - Botão de instalação para desktop e celular sem quebra de layout, e compartilhamento social.
 
 ---
 
